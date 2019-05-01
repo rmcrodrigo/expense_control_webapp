@@ -1,0 +1,18 @@
+.category-list-container, .add-category-container {
+    width: 90%;
+    min-width: 550px;
+    margin: 3% 0 3% 5%;
+    padding-bottom: 20px;
+}
+
+.category-list-container th {
+    text-align: center;
+}
+
+.category-list-title {
+    text-align: center;
+}
+
+.add-category-button {
+    float: right;
+}

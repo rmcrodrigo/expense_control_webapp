@@ -1,0 +1,25 @@
+.expenses-container {
+    width: 90%;
+    min-width: 500px;
+    margin: 3% 0 0 5%;
+    padding: 0 0 50px 0;
+}
+
+.expenses-title {
+    margin: 20px 0 30px 10px;
+    text-align: center;
+}
+
+.content {
+    width: 90%;
+    margin-left: 5%;
+}
+
+.add-button {
+    float: right;
+}
+
+.del-expense-button {
+    text-align: center;
+    margin-right: 5px;
+}
