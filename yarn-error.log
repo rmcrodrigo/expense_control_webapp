@@ -1,25 +1,30 @@
 Arguments: 
-  /usr/local/bin/node /usr/local/Cellar/yarn/1.9.2/libexec/bin/yarn.js add redux-cookies-middleware
+  C:\Program Files\nodejs\node.exe C:\Program Files (x86)\Yarn\bin\yarn.js audit --json
 
 PATH: 
-  /usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/share/dotnet:~/.dotnet/tools:/Library/Frameworks/Mono.framework/Versions/Current/Commands:/Applications/Xamarin Workbooks.app/Contents/SharedSupport/path-bin:/Users/rodrigo/.sdkman/candidates/gradle/current/bin
+  C:\WINDOWS\system32;C:\WINDOWS;C:\WINDOWS\System32\Wbem;C:\WINDOWS\System32\WindowsPowerShell\v1.0\;C:\WINDOWS\System32\OpenSSH\;C:\Program Files\nodejs\;C:\Program Files (x86)\Yarn\bin\;C:\Program Files\NVIDIA Corporation\NVIDIA NvDLISR;C:\Program Files\Git\cmd;C:\Program Files (x86)\NVIDIA Corporation\PhysX\Common;C:\Program Files\dotnet\;C:\Program Files\Microsoft SQL Server\130\Tools\Binn\;C:\Program Files\Microsoft SQL Server\Client SDK\ODBC\170\Tools\Binn\;C:\Program Files\Git\usr\bin;C:\Program Files\Java\jdk-11\bin;C:\Users\rmcro\AppData\Roaming\npm;C:\Program Files\MySQL\MySQL Shell 8.0\bin\;C:\Users\rmcro\AppData\Local\Programs\Microsoft VS Code\bin;C:\Users\rmcro\AppData\Local\Google\Cloud SDK\google-cloud-sdk\bin
 
 Yarn version: 
-  1.9.2
+  1.13.0
 
 Node version: 
-  11.12.0
+  10.15.0
 
 Platform: 
-  darwin x64
+  win32 x64
 
 Trace: 
-  SyntaxError: /Users/rodrigo/Documents/Desarrollo/ReactJS/Cloud/expenses_ctrl/package.json: Unexpected token } in JSON at position 528
-      at JSON.parse (<anonymous>)
-      at /usr/local/Cellar/yarn/1.9.2/libexec/lib/cli.js:1130:59
-      at Generator.next (<anonymous>)
-      at step (/usr/local/Cellar/yarn/1.9.2/libexec/lib/cli.js:92:30)
-      at /usr/local/Cellar/yarn/1.9.2/libexec/lib/cli.js:103:13
+  Error: EPIPE: broken pipe, write
+      at Socket._write (internal/net.js:58:25)
+      at doWrite (_stream_writable.js:410:12)
+      at writeOrBuffer (_stream_writable.js:394:5)
+      at Socket.Writable.write (_stream_writable.js:294:11)
+      at JSONReporter._dump (C:\Program Files (x86)\Yarn\lib\cli.js:48715:12)
+      at JSONReporter.auditAdvisory (C:\Program Files (x86)\Yarn\lib\cli.js:48873:10)
+      at reportAdvisory (C:\Program Files (x86)\Yarn\lib\cli.js:58293:22)
+      at Array.forEach (<anonymous>)
+      at C:\Program Files (x86)\Yarn\lib\cli.js:58300:25
+      at Array.forEach (<anonymous>)
 
 npm manifest: 
   {
@@ -31,9 +36,12 @@ npm manifest:
       "base-64": "^0.1.0",
       "connected-react-router": "^6.4.0",
       "history": "^4.9.0",
+      "js-cookie": "^2.2.0",
       "prop-types": "^15.7.2",
       "react": "^16.8.6",
+      "react-bootstrap": "^1.0.0-beta.8",
       "react-cookie": "^3.1.2",
+      "react-datepicker": "^2.4.0",
       "react-dom": "^16.8.6",
       "react-redux": "^7.0.2",
       "react-router": "^5.0.0",
@@ -41,7 +49,8 @@ npm manifest:
       "react-router-redux": "^4.0.8",
       "react-scripts": "2.1.8",
       "redux": "^4.0.1",
-      "redux-thunk": "^2.3.0",
+      "redux-cookie": "^0.5.9",
+      "redux-thunk": "^2.3.0"
     },
     "scripts": {
       "start": "react-scripts start",
@@ -945,7 +954,7 @@ Lockfile:
     dependencies:
       regenerator-runtime "^0.12.0"
   
-  "@babel/runtime@^7.1.2", "@babel/runtime@^7.4.3":
+  "@babel/runtime@^7.1.2", "@babel/runtime@^7.4.2", "@babel/runtime@^7.4.3":
     version "7.4.3"
     resolved "https://registry.yarnpkg.com/@babel/runtime/-/runtime-7.4.3.tgz#79888e452034223ad9609187a0ad1fe0d2ad4bdc"
     dependencies:
@@ -1057,6 +1066,25 @@ Lockfile:
   "@nodelib/fs.stat@^1.1.2":
     version "1.1.3"
     resolved "https://registry.yarnpkg.com/@nodelib/fs.stat/-/fs.stat-1.1.3.tgz#2b5a3ab3f918cca48a8c754c08168e3f03eba61b"
+  
+  "@react-bootstrap/react-popper@1.2.1":
+    version "1.2.1"
+    resolved "https://registry.yarnpkg.com/@react-bootstrap/react-popper/-/react-popper-1.2.1.tgz#4edf4851d5b4dcf2eb6b264ebbed1a7b7654177b"
+    dependencies:
+      babel-runtime "6.x.x"
+      create-react-context "^0.2.1"
+      popper.js "^1.14.4"
+      prop-types "^15.6.1"
+      typed-styles "^0.0.5"
+      warning "^3.0.0"
+  
+  "@restart/context@^2.1.4":
+    version "2.1.4"
+    resolved "https://registry.yarnpkg.com/@restart/context/-/context-2.1.4.tgz#a99d87c299a34c28bd85bb489cb07bfd23149c02"
+  
+  "@restart/hooks@^0.2.3":
+    version "0.2.7"
+    resolved "https://registry.yarnpkg.com/@restart/hooks/-/hooks-0.2.7.tgz#fc359198769c74ffe839f1e5c4b6694a92f2f9d5"
   
   "@svgr/babel-plugin-add-jsx-attribute@^4.2.0":
     version "4.2.0"
@@ -1868,7 +1896,7 @@ Lockfile:
       mkdirp "^0.5.1"
       source-map-support "^0.4.15"
   
-  babel-runtime@^6.22.0, babel-runtime@^6.26.0:
+  babel-runtime@6.x.x, babel-runtime@^6.22.0, babel-runtime@^6.26.0:
     version "6.26.0"
     resolved "https://registry.yarnpkg.com/babel-runtime/-/babel-runtime-6.26.0.tgz#965c7058668e82b55d7bfe04ff2337bc8b5647fe"
     dependencies:
@@ -2384,6 +2412,10 @@ Lockfile:
       isobject "^3.0.0"
       static-extend "^0.1.1"
   
+  classnames@^2.2.5, classnames@^2.2.6:
+    version "2.2.6"
+    resolved "https://registry.yarnpkg.com/classnames/-/classnames-2.2.6.tgz#43935bffdd291f326dad0a205309b38d00f650ce"
+  
   clean-css@4.2.x:
     version "4.2.1"
     resolved "https://registry.yarnpkg.com/clean-css/-/clean-css-4.2.1.tgz#2d411ef76b8569b6d0c84068dabe85b0aa5e5c17"
@@ -2719,7 +2751,14 @@ Lockfile:
       safe-buffer "^5.0.1"
       sha.js "^2.4.8"
   
-  create-react-context@^0.2.2:
+  create-react-context@<=0.2.2:
+    version "0.2.2"
+    resolved "https://registry.yarnpkg.com/create-react-context/-/create-react-context-0.2.2.tgz#9836542f9aaa22868cd7d4a6f82667df38019dca"
+    dependencies:
+      fbjs "^0.8.0"
+      gud "^1.0.0"
+  
+  create-react-context@^0.2.1, create-react-context@^0.2.2:
     version "0.2.3"
     resolved "https://registry.yarnpkg.com/create-react-context/-/create-react-context-0.2.3.tgz#9ec140a6914a22ef04b8b09b7771de89567cb6f3"
     dependencies:
@@ -2987,6 +3026,10 @@ Lockfile:
       whatwg-mimetype "^2.1.0"
       whatwg-url "^7.0.0"
   
+  date-fns@^2.0.0-alpha.23:
+    version "2.0.0-alpha.27"
+    resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-2.0.0-alpha.27.tgz#5ecd4204ef0e7064264039570f6e8afbc014481c"
+  
   date-now@^0.1.4:
     version "0.1.4"
     resolved "https://registry.yarnpkg.com/date-now/-/date-now-0.1.4.tgz#eaf439fd4d4848ad74e5cc7dbef200672b9e345b"
@@ -3204,6 +3247,12 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/dom-converter/-/dom-converter-0.2.0.tgz#6721a9daee2e293682955b6afe416771627bb768"
     dependencies:
       utila "~0.4"
+  
+  dom-helpers@^3.4.0:
+    version "3.4.0"
+    resolved "https://registry.yarnpkg.com/dom-helpers/-/dom-helpers-3.4.0.tgz#e9b369700f959f62ecde5a6babde4bccd9169af8"
+    dependencies:
+      "@babel/runtime" "^7.1.2"
   
   dom-serializer@0:
     version "0.1.0"
@@ -5418,6 +5467,10 @@ Lockfile:
       isemail "3.x.x"
       topo "2.x.x"
   
+  js-cookie@^2.2.0:
+    version "2.2.0"
+    resolved "https://registry.yarnpkg.com/js-cookie/-/js-cookie-2.2.0.tgz#1b2c279a6eece380a12168b92485265b35b1effb"
+  
   js-levenshtein@^1.1.3:
     version "1.1.4"
     resolved "https://registry.yarnpkg.com/js-levenshtein/-/js-levenshtein-1.1.4.tgz#3a56e3cbf589ca0081eb22cd9ba0b1290a16d26e"
@@ -5565,6 +5618,10 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/jsx-ast-utils/-/jsx-ast-utils-2.0.1.tgz#e801b1b39985e20fffc87b40e3748080e2dcac7f"
     dependencies:
       array-includes "^3.0.3"
+  
+  keycode@^2.2.0:
+    version "2.2.0"
+    resolved "https://registry.yarnpkg.com/keycode/-/keycode-2.2.0.tgz#3d0af56dc7b8b8e5cba8d0a97f107204eec22b04"
   
   killable@^1.0.0:
     version "1.0.1"
@@ -6697,6 +6754,10 @@ Lockfile:
     dependencies:
       ts-pnp "^1.0.0"
   
+  popper.js@^1.14.4, popper.js@^1.14.7:
+    version "1.15.0"
+    resolved "https://registry.yarnpkg.com/popper.js/-/popper.js-1.15.0.tgz#5560b99bbad7647e9faa475c6b8056621f5a4ff2"
+  
   portfinder@^1.0.9:
     version "1.0.17"
     resolved "https://registry.yarnpkg.com/portfinder/-/portfinder-1.0.17.tgz#a8a1691143e46c4735edefcf4fbcccedad26456a"
@@ -7364,20 +7425,27 @@ Lockfile:
       kleur "^2.0.1"
       sisteransi "^0.1.1"
   
-  prop-types@^15.6.2:
-    version "15.6.2"
-    resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.2.tgz#05d5ca77b4453e985d60fc7ff8c859094a497102"
+  prop-types-extra@^1.1.0:
+    version "1.1.0"
+    resolved "https://registry.yarnpkg.com/prop-types-extra/-/prop-types-extra-1.1.0.tgz#32609910ea2dcf190366bacd3490d5a6412a605f"
     dependencies:
-      loose-envify "^1.3.1"
-      object-assign "^4.1.1"
+      react-is "^16.3.2"
+      warning "^3.0.0"
   
-  prop-types@^15.7.2:
+  prop-types@^15.6.0, prop-types@^15.6.1, prop-types@^15.7.2:
     version "15.7.2"
     resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.7.2.tgz#52c41e75b8c87e72b9d9360e0206b99dcbffa6c5"
     dependencies:
       loose-envify "^1.4.0"
       object-assign "^4.1.1"
       react-is "^16.8.1"
+  
+  prop-types@^15.6.2:
+    version "15.6.2"
+    resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.6.2.tgz#05d5ca77b4453e985d60fc7ff8c859094a497102"
+    dependencies:
+      loose-envify "^1.3.1"
+      object-assign "^4.1.1"
   
   property-information@^5.0.0, property-information@^5.0.1:
     version "5.0.1"
@@ -7528,6 +7596,30 @@ Lockfile:
       raf "3.4.1"
       whatwg-fetch "3.0.0"
   
+  react-bootstrap@^1.0.0-beta.8:
+    version "1.0.0-beta.8"
+    resolved "https://registry.yarnpkg.com/react-bootstrap/-/react-bootstrap-1.0.0-beta.8.tgz#88d545526abe61c591d4eb84abad82e7f432c111"
+    dependencies:
+      "@babel/runtime" "^7.4.2"
+      "@react-bootstrap/react-popper" "1.2.1"
+      "@restart/context" "^2.1.4"
+      "@restart/hooks" "^0.2.3"
+      classnames "^2.2.6"
+      dom-helpers "^3.4.0"
+      invariant "^2.2.4"
+      keycode "^2.2.0"
+      popper.js "^1.14.7"
+      prop-types "^15.7.2"
+      prop-types-extra "^1.1.0"
+      react-overlays "^1.2.0"
+      react-transition-group "^2.7.1"
+      uncontrollable "^6.1.0"
+      warning "^4.0.3"
+  
+  react-context-toolbox@^2.0.2:
+    version "2.0.2"
+    resolved "https://registry.yarnpkg.com/react-context-toolbox/-/react-context-toolbox-2.0.2.tgz#35637287cb23f801e6ed802c2bb7a97e1f04e3fb"
+  
   react-cookie@^3.1.2:
     version "3.1.2"
     resolved "https://registry.yarnpkg.com/react-cookie/-/react-cookie-3.1.2.tgz#3835d25d3aabfa1dab38799f6bde49f5050580ac"
@@ -7535,6 +7627,16 @@ Lockfile:
       "@types/hoist-non-react-statics" "^3.0.1"
       hoist-non-react-statics "^3.0.0"
       universal-cookie "^3.1.0"
+  
+  react-datepicker@^2.4.0:
+    version "2.4.0"
+    resolved "https://registry.yarnpkg.com/react-datepicker/-/react-datepicker-2.4.0.tgz#0965a6004e1e6a3941d80155560b84fe8fc277e6"
+    dependencies:
+      classnames "^2.2.5"
+      date-fns "^2.0.0-alpha.23"
+      prop-types "^15.6.0"
+      react-onclickoutside "^6.7.1"
+      react-popper "^1.0.2"
   
   react-dev-utils@^8.0.0:
     version "8.0.0"
@@ -7579,9 +7681,41 @@ Lockfile:
     version "5.1.4"
     resolved "https://registry.yarnpkg.com/react-error-overlay/-/react-error-overlay-5.1.4.tgz#88dfb88857c18ceb3b9f95076f850d7121776991"
   
-  react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.6:
+  react-is@^16.3.2, react-is@^16.6.0, react-is@^16.7.0, react-is@^16.8.1, react-is@^16.8.6:
     version "16.8.6"
     resolved "https://registry.yarnpkg.com/react-is/-/react-is-16.8.6.tgz#5bbc1e2d29141c9fbdfed456343fe2bc430a6a16"
+  
+  react-lifecycles-compat@^3.0.4:
+    version "3.0.4"
+    resolved "https://registry.yarnpkg.com/react-lifecycles-compat/-/react-lifecycles-compat-3.0.4.tgz#4f1a273afdfc8f3488a8c516bfda78f872352362"
+  
+  react-onclickoutside@^6.7.1:
+    version "6.8.0"
+    resolved "https://registry.yarnpkg.com/react-onclickoutside/-/react-onclickoutside-6.8.0.tgz#9f91b5b3ed59f4d9e43fd71620dc200773a4d569"
+  
+  react-overlays@^1.2.0:
+    version "1.2.0"
+    resolved "https://registry.yarnpkg.com/react-overlays/-/react-overlays-1.2.0.tgz#205368eeb0a5fb0b7f9b717fa7a12d518500abdb"
+    dependencies:
+      classnames "^2.2.6"
+      dom-helpers "^3.4.0"
+      prop-types "^15.6.2"
+      prop-types-extra "^1.1.0"
+      react-context-toolbox "^2.0.2"
+      react-popper "^1.3.2"
+      uncontrollable "^6.0.0"
+      warning "^4.0.2"
+  
+  react-popper@^1.0.2, react-popper@^1.3.2:
+    version "1.3.3"
+    resolved "https://registry.yarnpkg.com/react-popper/-/react-popper-1.3.3.tgz#2c6cef7515a991256b4f0536cd4bdcb58a7b6af6"
+    dependencies:
+      "@babel/runtime" "^7.1.2"
+      create-react-context "<=0.2.2"
+      popper.js "^1.14.4"
+      prop-types "^15.6.1"
+      typed-styles "^0.0.7"
+      warning "^4.0.2"
   
   react-redux@^7.0.2:
     version "7.0.2"
@@ -7678,6 +7812,15 @@ Lockfile:
     optionalDependencies:
       fsevents "1.2.4"
   
+  react-transition-group@^2.7.1:
+    version "2.9.0"
+    resolved "https://registry.yarnpkg.com/react-transition-group/-/react-transition-group-2.9.0.tgz#df9cdb025796211151a436c69a8f3b97b5b07c8d"
+    dependencies:
+      dom-helpers "^3.4.0"
+      loose-envify "^1.4.0"
+      prop-types "^15.6.2"
+      react-lifecycles-compat "^3.0.4"
+  
   react@^16.8.6:
     version "16.8.6"
     resolved "https://registry.yarnpkg.com/react/-/react-16.8.6.tgz#ad6c3a9614fd3a4e9ef51117f54d888da01f2bbe"
@@ -7772,6 +7915,10 @@ Lockfile:
     dependencies:
       css-unit-converter "^1.1.1"
       postcss-value-parser "^3.3.0"
+  
+  redux-cookie@^0.5.9:
+    version "0.5.9"
+    resolved "https://registry.yarnpkg.com/redux-cookie/-/redux-cookie-0.5.9.tgz#e3cc97cd16240252f0b43938358c26fb28015f64"
   
   redux-thunk@^2.3.0:
     version "2.3.0"
@@ -8946,6 +9093,14 @@ Lockfile:
       media-typer "0.3.0"
       mime-types "~2.1.18"
   
+  typed-styles@^0.0.5:
+    version "0.0.5"
+    resolved "https://registry.yarnpkg.com/typed-styles/-/typed-styles-0.0.5.tgz#a60df245d482a9b1adf9c06c078d0f06085ed1cf"
+  
+  typed-styles@^0.0.7:
+    version "0.0.7"
+    resolved "https://registry.yarnpkg.com/typed-styles/-/typed-styles-0.0.7.tgz#93392a008794c4595119ff62dde6809dbc40a3d9"
+  
   typedarray@^0.0.6:
     version "0.0.6"
     resolved "https://registry.yarnpkg.com/typedarray/-/typedarray-0.0.6.tgz#867ac74e3864187b1d3d47d996a78ec5c8830777"
@@ -8960,6 +9115,12 @@ Lockfile:
     dependencies:
       commander "~2.17.1"
       source-map "~0.6.1"
+  
+  uncontrollable@^6.0.0, uncontrollable@^6.1.0:
+    version "6.1.0"
+    resolved "https://registry.yarnpkg.com/uncontrollable/-/uncontrollable-6.1.0.tgz#45dcf54b76bf07e0ddf7c1a669caf935d2e101d5"
+    dependencies:
+      invariant "^2.2.4"
   
   unicode-canonical-property-names-ecmascript@^1.0.4:
     version "1.0.4"
@@ -9032,13 +9193,7 @@ Lockfile:
     dependencies:
       "@types/unist" "^2.0.2"
   
-  universal-cookie-express@^3.1.0:
-    version "3.1.0"
-    resolved "https://registry.yarnpkg.com/universal-cookie-express/-/universal-cookie-express-3.1.0.tgz#f85d04dcd655444ee50f1c1980ac9b6521624681"
-    dependencies:
-      universal-cookie "^3.0.7"
-  
-  universal-cookie@^3.0.7, universal-cookie@^3.1.0:
+  universal-cookie@^3.1.0:
     version "3.1.0"
     resolved "https://registry.yarnpkg.com/universal-cookie/-/universal-cookie-3.1.0.tgz#a16964ccb16cf8fa463bda1ebe86482945339ad8"
     dependencies:
@@ -9225,6 +9380,18 @@ Lockfile:
     resolved "https://registry.yarnpkg.com/walker/-/walker-1.0.7.tgz#2f7f9b8fd10d677262b18a884e28d19618e028fb"
     dependencies:
       makeerror "1.0.x"
+  
+  warning@^3.0.0:
+    version "3.0.0"
+    resolved "https://registry.yarnpkg.com/warning/-/warning-3.0.0.tgz#32e5377cb572de4ab04753bdf8821c01ed605b7c"
+    dependencies:
+      loose-envify "^1.0.0"
+  
+  warning@^4.0.2, warning@^4.0.3:
+    version "4.0.3"
+    resolved "https://registry.yarnpkg.com/warning/-/warning-4.0.3.tgz#16e9e077eb8a86d6af7d64aa1e05fd85b4678ca3"
+    dependencies:
+      loose-envify "^1.0.0"
   
   watch@~0.18.0:
     version "0.18.0"
