@@ -1,49 +1,40 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import {connect} from 'react-redux';
-import {Card} from 'react-bootstrap';
 
 import {addCategoryRq, resetCategoriesError} from '../../../actions/categoryActions';
 import CategoryForm from '../CategoryForm/CategoryForm';
 import '../Categories.css';
-import {SimpleError} from '../../Errors';
 
-class AddCategory extends React.Component {
+const AddCategory = ({addCategoryRq, categoryErrors, history, resetCategoriesError, userToken}) => {
 
-    render() {
-
-        const {addCategoryRq, categoryErrors, history, resetCategoriesError} = this.props;
-
-        return (
-            <Card className="add-category-container">
-                <Card.Body>
-                    <Card.Title className="card-title">Agregar categoria</Card.Title>
-                    <SimpleError
-                        callback={resetCategoriesError}
-                        errorObj={categoryErrors}
-                        timeout={5000} />
-                    <CategoryForm
-                        actionForm="add"
-                        addCategoryRq={addCategoryRq}
-                        history={history}
-                        userId={this.props.userId}
-                     />
-                </Card.Body>
-            </Card>
-        );
-    }
+    return (
+      <div className="card add-category-container">
+        <div className="card-body">
+          <div className="card-title h2 mb-4">Agregar categoria</div>
+          <CategoryForm
+            actionForm="add"
+            addCategoryRq={addCategoryRq}
+            categoryErrors={categoryErrors}
+            history={history}
+            resetCategoriesError={resetCategoriesError}
+            userToken={userToken}
+          />
+        </div>
+      </div>
+    );
 }
 
 AddCategory.propTypes = {
-    addCategoryRq: PropTypes.func.isRequired,
-    categoryErrors: PropTypes.object,
-    resetCategoriesError: PropTypes.func.isRequired,
-    userId: PropTypes.number.isRequired
-}
+  addCategoryRq: PropTypes.func.isRequired,
+  categoryErrors: PropTypes.array,
+  resetCategoriesError: PropTypes.func.isRequired,
+  userToken: PropTypes.string.isRequired,
+};
 
-const mapStateToProps = state => ({
-    categoryErrors: state.category.categoryErrors,
-    userId: state.sign.userId
-})
+const mapStateToProps = (state) => ({
+  categoryErrors: state.category.categoryErrors,
+  userToken: state.sign.userData.token,
+});
 
 export default connect(mapStateToProps, {addCategoryRq, resetCategoriesError})(AddCategory);

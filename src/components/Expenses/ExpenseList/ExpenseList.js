@@ -1,43 +1,53 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
 import Expense from '../Expense/Expense';
-import { Table } from 'react-bootstrap';
 
-class ExpenseList extends React.Component {
+const ExpenseList = ({ categories, delExpenseRq, expenses, goExpenseForm, userToken }) => {
 
-    render() {
-        const {categories, delExpenseRq, expenseList} = this.props;
-        return (
-            <Table striped bordered hover>
-                <thead className="thead-dark">
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Descripcion</th>
-                        <th>Monto</th>
-                        <th>Categoria</th>
-                        <th>Accion</th>
-                    </tr>
-                </thead>
-                <tbody>
-                {
-                    expenseList.map(expense => (
-                        <Expense
-                            categories={categories}
-                            delExpenseRq={delExpenseRq}
-                            expense={expense}
-                            key={expense.id} />
-                    ))
-                }
-                </tbody>
-            </Table>
-        );
-    }
-}
+  const total =
+    expenses && expenses.length > 0
+      ? expenses.reduce((total, gasto) => total + gasto.amount, 0)
+      : 0;
+
+  return (
+    <React.Fragment>
+      <table className="table table-bordered table-hover table-striped">
+        <thead className="thead-dark">
+          <tr>
+            <th>Fecha</th>
+            <th>Descripcion</th>
+            <th>Categoria</th>
+            <th>Monto</th>
+            <th>Accion</th>
+          </tr>
+        </thead>
+        <tbody>
+          {expenses.map((expense) => (
+            <Expense
+              categories={categories}
+              delExpenseRq={delExpenseRq}
+              expense={expense}
+              goExpenseForm={goExpenseForm}
+              key={expense.id}
+              userToken={userToken}
+            />
+          ))}
+        </tbody>
+      </table>
+      <div style={{ fontSize: 18, textAlign: 'right', marginBottom: 10 }}>
+        <span style={{ fontWeight: 'bolder' }}>Total:</span> {total}
+      </div>
+    </React.Fragment>
+  );
+};
 
 ExpenseList.propTypes = {
     categories: PropTypes.array.isRequired,
     delExpenseRq: PropTypes.func.isRequired,
-    expenseList: PropTypes.array.isRequired
+    expenses: PropTypes.array.isRequired,
+    goExpenseForm: PropTypes.func.isRequired,
+    userToken: PropTypes.string.isRequired
 }
 
 export default ExpenseList;

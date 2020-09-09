@@ -1,6 +1,6 @@
 .category-list-container, .add-category-container {
-    width: 90%;
     min-width: 550px;
+    max-width: 90%;
     margin: 3% 0 3% 5%;
     padding-bottom: 20px;
 }

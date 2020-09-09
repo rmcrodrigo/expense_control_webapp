@@ -1,49 +1,66 @@
-import React from 'react';
-import {connect} from 'react-redux';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
 import './AddExpense.css';
-import {addExpenseRq, resetExpenseError} from '../../../actions/expensesActions';
-import {getUserCategoriesRq} from '../../../actions/categoryActions';
+import {
+  addExpenseRq,
+  resetExpenseError,
+} from '../../../actions/expensesActions';
+import { getUserCategoriesByTypeRq } from '../../../actions/categoryActions';
 import ExpenseForm from '../ExpenseForm/ExpenseForm';
+import NoCategoriesMsg from '../../Categories/NoCategoriesMsg/NoCategoriesMsg';
 
-class AddExpense extends React.Component {
+const AddExpense = ({
+  addExpenseRq,
+  categories,
+  expenseErrors,
+  getUserCategoriesByTypeRq,
+  history,
+  resetExpenseError,
+  userToken,
+}) => {
+  
+  useEffect(() => {
+    getUserCategoriesByTypeRq(1, userToken);
+  }, []);
 
-    render() {
+  if (!categories || categories.length < 1) return <NoCategoriesMsg />;
 
-        const {addExpenseRq, categories, expenseErrors, getUserCategoriesRq, history, resetExpenseError} = this.props;
-
-        return(
-            <div className="add-expense-container card">
-                <p className="card-title h1">Agregar nuevo gasto</p>
-                <ExpenseForm
-                    actionForm="add"
-                    addExpenseRq={addExpenseRq}
-                    categories={categories}
-                    expenseErrors={expenseErrors}
-                    getUserCategoriesRq={getUserCategoriesRq}
-                    history={history}
-                    resetExpenseError={resetExpenseError}
-                    userId={this.props.userId}
-                />
-            </div>
-        )
-    }
-}
-
-AddExpense.propTypes = {
-    addExpenseRq: PropTypes.func.isRequired,
-    categories: PropTypes.array.isRequired,
-    expenseErrors: PropTypes.object,
-    getUserCategoriesRq: PropTypes.func.isRequired,
-    resetExpenseError: PropTypes.func.isRequired,
-    userId: PropTypes.number.isRequired
+  return (
+    <div className="add-expense-container card">
+      <p className="card-title h2 mb-4">Agregar nuevo gasto</p>
+      <ExpenseForm
+        actionForm="add"
+        addExpenseRq={addExpenseRq}
+        categories={categories}
+        expenseErrors={expenseErrors}
+        history={history}
+        resetExpenseError={resetExpenseError}
+        userToken={userToken}
+      />
+    </div>
+  );
 };
 
-const mapStateToProps = state => ({
-    categories: state.category.categories,
-    expenseErrors: state.expense.expenseErrors,
-    userId: state.sign.userId
+AddExpense.propTypes = {
+  addExpenseRq: PropTypes.func.isRequired,
+  categories: PropTypes.array,
+  expenseErrors: PropTypes.array,
+  getUserCategoriesByTypeRq: PropTypes.func.isRequired,
+  resetExpenseError: PropTypes.func.isRequired,
+  userToken: PropTypes.string.isRequired,
+};
+
+const mapStateToProps = (state) => ({
+  categories: state.category.categories,
+  expenseErrors: state.expense.expenseErrors,
+  userToken: state.sign.userData.token,
 });
 
-export default connect(mapStateToProps, {addExpenseRq, getUserCategoriesRq, resetExpenseError})(AddExpense);
+export default connect(mapStateToProps, {
+  addExpenseRq,
+  getUserCategoriesByTypeRq,
+  resetExpenseError,
+})(AddExpense);

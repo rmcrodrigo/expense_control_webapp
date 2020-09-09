@@ -1,44 +1,76 @@
 import React from 'react';
-import {Link} from 'react-router-dom';
+import PropTypes from 'prop-types';
 
-const Expense = (props) => {
-    const {categories, delExpenseRq, expense} = props;
+const Expense = ({
+  categories,
+  delExpenseRq,
+  expense,
+  goExpenseForm,
+  userToken,
+}) => {
+  const category = categories.find((c) => c.id === expense.categoryId);
 
-    const delExpense = id => {
-        if(window.confirm("Estas seguro que deseas borrar este elemento?"))
-            delExpenseRq(id);
-    }
-    const expenseDate = new Intl.DateTimeFormat('es-MX', { 
-        year: 'numeric', 
-        month: '2-digit', 
-        day: '2-digit' 
-    }).format(new Date(expense.expenseDate));
-
-    let category = {
-        name:""
-    };
-    
-    if(categories && categories.length > 0)
-        category = categories.find(category => category.id === (expense.category.id || expense.category));
-
+  if (!category || !category.id)
     return (
-
-        <tr className="data-info">
-            <td><p>{expenseDate}</p></td>
-            <td><p>{expense.description}</p></td>
-            <td><p>{expense.amount}</p></td>
-            <td><p>{category.name}</p></td>
-            <td className="text-center">
-                <button type="button" onClick={() => delExpense(expense.id)}
-                    className="del-expense-button btn btn-sm btn-danger">
-                    Eliminar
-                </button>
-                <Link className="edit-expense-button btn btn-sm btn-dark" to={`/expenses/edit/${expense.id}`}>
-                    Editar
-                </Link>
-            </td>
-        </tr>
+      <tr className="data-info">
+        <td colSpan="5" className="alert alert-danger">
+          No se encuentra la categoria asociada al ingreso
+        </td>
+      </tr>
     );
-}
 
-export default Expense;
+  const delExpense = (id) => {
+    if (window.confirm('Estas seguro que deseas borrar este elemento?'))
+      delExpenseRq(id, userToken);
+  };
+
+  const expenseDate = new Intl.DateTimeFormat('es-MX', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date(expense.expenseDate));
+
+  return (
+    <tr className="data-info">
+      <td>
+        <p>{expenseDate}</p>
+      </td>
+      <td>
+        <p>{expense.description}</p>
+      </td>
+      <td>
+        <p>{category.name}</p>
+      </td>
+      <td>
+        <p>{expense.amount}</p>
+      </td>
+      <td className="text-center">
+        <button
+          className="btn btn-sm btn-danger"
+          onClick={() => delExpense(expense.id)}
+          type="button"
+        >
+          Eliminar
+        </button>
+        <button
+          className="btn btn-sm btn-dark"
+          onClick={(e) => goExpenseForm(e, expense.id)}
+          style={{ marginLeft: 5 }}
+          type="button"
+        >
+          Editar
+        </button>
+      </td>
+    </tr>
+  );
+};
+
+Expense.propTypes = {
+  categories: PropTypes.array.isRequired,
+  delExpenseRq: PropTypes.func.isRequired,
+  expense: PropTypes.object.isRequired,
+  goExpenseForm: PropTypes.func.isRequired,
+  userToken: PropTypes.string.isRequired,
+};
+
+export default React.memo(Expense);

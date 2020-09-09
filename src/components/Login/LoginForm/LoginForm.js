@@ -1,179 +1,169 @@
-import React, {Component} from 'react';
+import React, { useState } from 'react';
 import PropTypes from 'prop-types';
-import { Button, Form} from 'react-bootstrap';
 import SuccessMsg from '../../Util/SuccessMsg';
-import {SimpleError} from '../../Errors';
+import { SimpleError } from '../../Errors';
 
-class LoginForm extends Component {
+function LoginForm({
+  resetError,
+  resetSuccessMsg,
+  showLoginForm,
+  signErrors,
+  signInRq,
+  signUpMsg,
+  switchForms,
+}) {
+  const [email, setEmail] = useState('');
+  const [emailError, setEmailError] = useState(false);
+  const [password, setPassword] = useState('');
+  const [passwordError, setPasswordError] = useState(false);
 
-  state = {
-    email: "",
-    emailError: false,
-    password: "",
-    passwordError: false
-  }
-
-  strongRegex = new RegExp("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})");
-
-  changeEmail = (e) => {
+  const changeEmail = (e) => {
     e.preventDefault();
 
     let emailError = false;
 
-    if(!e.target.value || !e.target.validity.valid){
+    if (!e.target.value || !e.target.validity.valid) {
       emailError = true;
     }
 
-    this.setState({
-      emailError,
-      email: e.target.value
-    })
-  }
+    setEmailError(emailError);
+    setEmail(e.target.value);
+  };
 
-  changePassword = (e) => {
-
-    const {value} = e.target;
+  const changePassword = (e) => {
+    const { value } = e.target;
     let passwordError = false;
 
-    if(!value/* || !this.strongRegex.test(value)*/)
-      passwordError = true;
+    if (!value) passwordError = true;
 
-    this.setState({
-      password: value,
-      passwordError
-    });
-  }
+    setPassword(value);
+    setPasswordError(passwordError);
+  };
 
-  login = (e) => {
+  const login = (e) => {
     e.preventDefault();
     const emailInput = e.target.email;
-    
-    const {email, password} = this.state;
 
-    let emailError = false;
-    let passwordError = false;
+    let _emailError = false;
+    let _passwordError = false;
 
-    if(!email || !emailInput.validity.valid){
-      emailError = true;
+    if (!email || !emailInput.validity.valid) {
+      _emailError = true;
     }
 
-    if(!password/* || !this.strongRegex.test(password)*/){
-      passwordError = true;
+    if (!password) {
+      _passwordError = true;
     }
 
-    if(emailError || passwordError) {
-      this.setState({
-        emailError,
-        passwordError
-      });
+    if (_emailError || _passwordError) {
+      setEmailError(_emailError);
+      setPasswordError(passwordError);
 
       return false;
     }
 
-    this.props.signInRq(email, password);
+    signInRq(email, password);
+  };
 
-  }
-
-  renderErrorMsgs = () => {
-    const {resetError, signError} = this.props;
-
-    if(signError && signError.hasOwnProperty("code"))
+  const renderErrorMsgs = () => {
+    if (signErrors && signErrors.length > 0) {
       return (
         <SimpleError
-            callback={resetError}
-            errorObj={signError}
-            show={true}
-            timeout={5000} />
+          callback={resetError}
+          errors={signErrors}
+          timeout={10000}
+        />
       );
-  }
+    }
+    return null;
+  };
 
-  showNewUserForm = (e) => {
+  const showNewUserForm = (e) => {
     e.preventDefault();
-    this.props.switchForms('NewUser');
-  }
+    switchForms('NewUser');
+  };
 
-  render() {
+  return (
+    <React.Fragment>
+      <form
+        autoComplete="off"
+        className={`login100-form validate-form ${
+          showLoginForm ? '' : 'hidden'
+        }`}
+        onSubmit={login}
+        style={{ paddingTop: '25%' }}
+      >
+        <p className="h2 text-center" style={{ marginBottom: 30 }}>
+          Member Login
+        </p>
 
-    const {resetSuccessMsg, showLoginForm, signUpMsg} = this.props;
-    const {emailError, passwordError} = this.state;
+        <SuccessMsg
+          callback={resetSuccessMsg}
+          msg={signUpMsg}
+          show={true}
+          timeout={5000}
+        />
 
-    return (
-      <React.Fragment>
-        <Form autoComplete="off"
-          className={`login100-form validate-form ${showLoginForm ? "": "hidden"}`}
-          onSubmit={this.login}
-          style={{paddingTop: "25%"}}>
-        
-          <p className="h2 text-center" style={{marginBottom: 30}}>Member Login</p>
+        {renderErrorMsgs()}
 
-          <SuccessMsg
-              callback={resetSuccessMsg}
-              msg={signUpMsg}
-              show={true}
-              timeout={5000} />
-
-          {this.renderErrorMsgs()}
-
-          <Form.Group className="input-group">
-            <div className="input-group-prepend">
-              <span className="input-group-text">
-                <i className="fa fa-envelope"/>
-              </span>
-            </div>
-            <Form.Control 
-              className={emailError ? " input-error": ""}
-              name="email"
-              onChange={this.changeEmail}
-              type="email"
-              placeholder="Email"/>
-          </Form.Group>
-
-          <Form.Group className="input-group">
-            <div className="input-group-prepend">
-              <span className="input-group-text">
-                <i className="fa fa-lock"/>
-              </span>
-            </div>
-            <Form.Control 
-              className={passwordError ? " input-error": ""}
-              name="password"
-              onChange={this.changePassword}
-              type="password"
-              placeholder="Password"/>
-          </Form.Group>
-          
-          <div className="text-center" style={{marginBottom: 10, marginTop: 25}}>
-            <Button
-                className="btn-lg"
-                type="submit"
-                variant="success">
-              Login
-            </Button>
+        <div className="form-group input-group">
+          <div className="input-group-prepend">
+            <span className="input-group-text">
+              <i className="fa fa-envelope" />
+            </span>
           </div>
+          <input
+            className={'form-control ' + (emailError ? ' input-error' : '')}
+            name="email"
+            onChange={changeEmail}
+            type="email"
+            placeholder="Email"
+          />
+        </div>
 
-          <div className="text-center">
-            <button className="btn btn-link"
-                onClick={this.showNewUserForm}
-              >
-              Create your Account
-            </button>
+        <div className="form-group input-group">
+          <div className="input-group-prepend">
+            <span className="input-group-text">
+              <i className="fa fa-lock" />
+            </span>
           </div>
+          <input
+            className={'form-control ' + (passwordError ? ' input-error' : '')}
+            name="password"
+            onChange={changePassword}
+            type="password"
+            placeholder="Password"
+          />
+        </div>
 
-        </Form>
-      </React.Fragment>
-    );
-  }
+        <div
+          className="text-center"
+          style={{ marginBottom: 10, marginTop: 25 }}
+        >
+          <button className="btn btn-lg btn-success" type="submit">
+            Login
+          </button>
+        </div>
+
+        <div className="text-center">
+          <button className="btn btn-link" type="button" onClick={showNewUserForm}>
+            Create your Account
+          </button>
+        </div>
+      </form>
+    </React.Fragment>
+  );
 }
 
 LoginForm.propTypes = {
   resetError: PropTypes.func.isRequired,
   resetSuccessMsg: PropTypes.func.isRequired,
   showLoginForm: PropTypes.bool.isRequired,
-  signError: PropTypes.object,
+  signErrors: PropTypes.array,
   signInRq: PropTypes.func.isRequired,
   signUpMsg: PropTypes.string,
   switchForms: PropTypes.func.isRequired,
-  userData: PropTypes.object.isRequired
-}
+  userData: PropTypes.object,
+};
 
 export default LoginForm;

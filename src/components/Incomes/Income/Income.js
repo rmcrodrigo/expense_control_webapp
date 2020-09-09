@@ -1,36 +1,76 @@
 import React from 'react';
-import {Button} from 'react-bootstrap';
-import {Link} from 'react-router-dom';
+import PropTypes from 'prop-types';
 
-export default (props) => {
-    const {income} = props;
-    const incomeDate = new Intl.DateTimeFormat('es-MX', { 
-        year: 'numeric', 
-        month: '2-digit', 
-        day: '2-digit' 
-    }).format(new Date(income.incomeDate));
+const Income = ({
+  categories,
+  delIncomeRq,
+  goIncomeForm,
+  income,
+  userToken,
+}) => {
+  const category = categories.find((c) => c.id === income.categoryId);
 
-    const delIncome = id => {
-        if(window.confirm("Estas seguro de que deseas eliminar este ingreso?"))
-            props.delIncomeRq(id);
-    }
-
+  if (!category || !category.id)
     return (
-        <tr className="data-info">
-            <td><p>{incomeDate}</p></td>
-            <td><p>{income.description}</p></td>
-            <td><p>{income.amount}</p></td>
-            <td className="text-center">
-                <Button
-                    className="btn-sm"
-                    onClick={() => delIncome(income.id)}
-                    type="button"
-                    variant="danger">Eliminar</Button>
-                <Link
-                    className="btn btn-sm btn-dark"
-                    to={`/income/edit/${income.id}`}
-                    style={{marginLeft: 5}}>Editar</Link>
-            </td>
-        </tr>
-    )
-}
+      <tr className="data-info">
+        <td colSpan="5" className="alert alert-danger">
+          No se encuentra la categoria asociada al ingreso
+        </td>
+      </tr>
+    );
+
+  const delIncome = (id) => {
+    if (window.confirm('Estas seguro de que deseas eliminar este ingreso?'))
+      delIncomeRq(id, userToken);
+  };
+
+  const incomeDate = new Intl.DateTimeFormat('es-MX', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  }).format(new Date(income.incomeDate));
+
+  return (
+    <tr className="data-info">
+      <td>
+        <p>{incomeDate}</p>
+      </td>
+      <td>
+        <p>{income.description}</p>
+      </td>
+      <td>
+        <p>{category.name}</p>
+      </td>
+      <td>
+        <p>{income.amount}</p>
+      </td>
+      <td className="text-center">
+        <button
+          className="btn btn-danger btn-sm"
+          onClick={() => delIncome(income.id)}
+          type="button"
+        >
+          Eliminar
+        </button>
+        <button
+          className="btn btn-dark btn-sm"
+          onClick={(e) => goIncomeForm(e, income.id)}
+          style={{ marginLeft: 5 }}
+          type="button"
+        >
+          Editar
+        </button>
+      </td>
+    </tr>
+  );
+};
+
+Income.propTypes = {
+  categories: PropTypes.array.isRequired,
+  delIncomeRq: PropTypes.func.isRequired,
+  goIncomeForm: PropTypes.func.isRequired,
+  income: PropTypes.object.isRequired,
+  userToken: PropTypes.string.isRequired,
+};
+
+export default Income;

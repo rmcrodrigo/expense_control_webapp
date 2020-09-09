@@ -1,3 +1,15 @@
 #basic-nav-dropdown {
     margin-right: 30px;
 }
+
+#basic-nav-dropdown .dropdown-toggle {
+    cursor: pointer;
+}
+
+#basic-nav-dropdown .dropdown-menu {
+    left: -32px;
+}
+
+#basic-nav-dropdown .dropdown-menu .link {
+    cursor: pointer;
+}

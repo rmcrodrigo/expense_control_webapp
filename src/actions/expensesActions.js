@@ -1,107 +1,208 @@
 import {
-    ADD_EXPENSE_RQ, ADD_EXPENSE_SUCCESS,
-    DEL_EXPENSE_RQ, DEL_EXPENSE_SUCCESS,
-    EDIT_EXPENSE_RQ, EDIT_EXPENSE_SUCCESS, 
-    EXPENSES_ERROR,
-    GET_ALL_EXPENSES_RQ, GET_ALL_EXPENSES_SUCCESS,
-    GET_EXPENSE_BYID_RQ, GET_EXPENSE_BYID_SUCCESS,
-    RESET_EXPENSE_ERROR
+  ADD_EXPENSE_RQ,
+  ADD_EXPENSE_SUCCESS,
+  DEL_EXPENSE_RQ,
+  DEL_EXPENSE_SUCCESS,
+  EDIT_EXPENSE_RQ,
+  EDIT_EXPENSE_SUCCESS,
+  EXPENSES_ERROR,
+  GET_ALL_EXPENSES_RQ,
+  GET_ALL_EXPENSES_SUCCESS,
+  GET_EXPENSE_BYID_RQ,
+  GET_EXPENSE_BYID_SUCCESS,
+  RESET_EXPENSE_ERROR,
+  SET_SPINNER_VISIBILITY
 } from './types';
-import axios from 'axios';
 
-const url = "http://localhost:8080/expenses/";
+import axios from '../utilities/axiosConfig';
 
-export const addExpenseRq = (expense, history) => {
-    return (dispatch) => {
-        dispatch({type: ADD_EXPENSE_RQ});
-        axios.post(url, expense)
-            .then(response => {
-                dispatch({
-                    type: ADD_EXPENSE_SUCCESS,
-                    payload: response.data
-                });
-                history.push("/");
-            })
-            .catch(error => {
-                expensesError(error, dispatch);
-            })
+import { handleRequestError } from '../utilities/util';
+
+const url = '/expenses';
+
+export const addExpenseRq = (expense, history, userToken) => {
+  const config = {
+    headers: {
+      Authorization: 'Bearer ' + userToken,
     }
+  };
+  return (dispatch) => {
+    dispatch({
+      type: SET_SPINNER_VISIBILITY,
+      payload: true,
+    });
+    dispatch({ type: ADD_EXPENSE_RQ });
+    axios
+      .post(url, expense, config)
+      .then((response) => {
+        if (handleRequestError(response, dispatch, expensesError)) {
+          dispatch({
+            type: ADD_EXPENSE_SUCCESS,
+            payload: response.data.expense,
+          });
+          history.push('/expenses');
+        }
+      })
+      .catch((error) => {
+        handleRequestError(error, dispatch, expensesError);
+      })
+      .finally(() => {
+        dispatch({
+          type: SET_SPINNER_VISIBILITY,
+          payload: false,
+        });
+      });
+  };
 };
 
-export const delExpenseRq = (id) => {
-    return (dispatch) => {
-        dispatch({type: DEL_EXPENSE_RQ});
-        axios.delete(`${url}${id}/`)
-            .then(() => {
-                dispatch({
-                    type: DEL_EXPENSE_SUCCESS,
-                    payload: id
-                });
-            })
-            .catch(error => {
-                expensesError(error, dispatch);
-            })
+export const delExpenseRq = (id, userToken) => {
+  const config = {
+    headers: {
+      Authorization: 'Bearer ' + userToken,
     }
+  };
+  return (dispatch) => {
+    dispatch({
+      type: SET_SPINNER_VISIBILITY,
+      payload: true,
+    });
+    dispatch({ type: DEL_EXPENSE_RQ });
+    axios
+      .delete(`${url}/user/${id}`, config)
+      .then((response) => {
+        if (handleRequestError(response, dispatch, expensesError)) {
+          dispatch({
+            type: DEL_EXPENSE_SUCCESS,
+            payload: id,
+          });
+        }
+      })
+      .catch((error) => {
+        handleRequestError(error, dispatch, expensesError);
+      })
+      .finally(() => {
+        dispatch({
+          type: SET_SPINNER_VISIBILITY,
+          payload: false,
+        });
+      });
+  };
 };
 
-export const editExpenseRq = (expense, history) => {
-    return (dispatch) => {
-        dispatch({type: EDIT_EXPENSE_RQ});
-        axios.put(`${url}${expense.id}/`, expense)
-            .then(response => {
-                dispatch({
-                    type: EDIT_EXPENSE_SUCCESS,
-                    payload: response.data
-                });
-                history.push("/");
-            })
-            .catch(error => {
-                expensesError(error, dispatch);
-            })
+export const editExpenseRq = (expense, history, userToken) => {
+  const config = {
+    headers: {
+      Authorization: 'Bearer ' + userToken,
     }
-}
+  };
+  return (dispatch) => {
+    dispatch({
+      type: SET_SPINNER_VISIBILITY,
+      payload: true,
+    });
+    dispatch({ type: EDIT_EXPENSE_RQ });
+    axios
+      .put(`${url}/user`, expense, config)
+      .then((response) => {
+        if (handleRequestError(response, dispatch, expensesError)) {
+          dispatch({
+            type: EDIT_EXPENSE_SUCCESS,
+            payload: response.data.expense,
+          });
+          history.push('/expenses');
+        }
+      })
+      .catch((error) => {
+        handleRequestError(error, dispatch, expensesError);
+      })
+      .finally(() => {
+        dispatch({
+          type: SET_SPINNER_VISIBILITY,
+          payload: false,
+        });
+      });
+  };
+};
 
 const expensesError = (error, dispatch) => {
-    dispatch({
-        type: EXPENSES_ERROR,
-        payload: error.response.data
-    });
-}
-
-export const getAllExpensesRq = (userId, from, to) => {
-    return (dispatch) => {
-        dispatch({type: GET_ALL_EXPENSES_RQ});
-        axios.get(`${url}user/${userId}/range/${from}/${to}`)
-            .then(response => {
-                dispatch({
-                    type: GET_ALL_EXPENSES_SUCCESS,
-                    payload: response.data
-                });
-            })
-            .catch(error => {
-                expensesError(error, dispatch);
-            })
-    }
+  dispatch({
+    type: EXPENSES_ERROR,
+    payload: error,
+  });
 };
 
-export const getExpenseById = (id) => {
-    return (dispatch) => {
-        dispatch({type: GET_EXPENSE_BYID_RQ});
-        axios.get(`${url}${id}/`)
-            .then(response => {
-                dispatch({
-                    type: GET_EXPENSE_BYID_SUCCESS,
-                    payload: response.data
-                });
-            })
-            .catch(error => {
-                expensesError(error);
-            })
+export const getAllExpensesRq = (userToken, from, to) => {
+  const config = {
+    headers: {
+      Authorization: 'Bearer ' + userToken
     }
-}
+  };
+
+  return (dispatch) => {
+    dispatch({
+      type: SET_SPINNER_VISIBILITY,
+      payload: true,
+    });
+    dispatch({ type: GET_ALL_EXPENSES_RQ });
+    axios
+      .get(`${url}/user/range/${from}/${to}`, config)
+      .then((response) => {
+        if (handleRequestError(response, dispatch, expensesError)) {
+          dispatch({
+            type: GET_ALL_EXPENSES_SUCCESS,
+            payload: response.data.expenses,
+          });
+        }
+      })
+      .catch((error) => {
+        handleRequestError(error, dispatch, expensesError);
+      })
+      .finally(() => {
+        dispatch({
+          type: SET_SPINNER_VISIBILITY,
+          payload: false,
+        });
+      });
+  };
+};
+
+export const getExpenseById = (expenseId, userToken) => {
+  const config = {
+    headers: {
+      Authorization: 'Bearer ' + userToken
+    }
+  };
+
+  return (dispatch) => {
+    dispatch({
+      type: SET_SPINNER_VISIBILITY,
+      payload: true,
+    });
+    dispatch({ type: GET_EXPENSE_BYID_RQ });
+    axios
+      .get(`${url}/user/${expenseId}`, config)
+      .then((response) => {
+        if (handleRequestError(response, dispatch, expensesError)) {
+          dispatch({
+            type: GET_EXPENSE_BYID_SUCCESS,
+            payload: response.data.expense,
+          });
+        }
+      })
+      .catch((error) => {
+        handleRequestError(error, dispatch, expensesError);
+      })
+      .finally(() => {
+        dispatch({
+          type: SET_SPINNER_VISIBILITY,
+          payload: false,
+        });
+      });
+  };
+};
 
 export const resetExpenseError = () => {
-    return {
-        type: RESET_EXPENSE_ERROR
-    }
-}
+  return {
+    type: RESET_EXPENSE_ERROR,
+  };
+};

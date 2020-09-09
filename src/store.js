@@ -1,58 +1,26 @@
 import {applyMiddleware, compose, createStore} from 'redux';
-import Cookies from 'js-cookie';
-import {createCookieMiddleware} from 'redux-cookie';
 import thunk from 'redux-thunk';
 import {createBrowserHistory} from 'history';
 import {routerMiddleware} from 'connected-react-router';
 import rootReducer from './reducers';
-import {setUserDataFromCookie} from './actions/signActions';
+import {setUserDataFromStorage} from './actions/signActions';
 
 export const history = createBrowserHistory();
 
-/*
-const logger = store => next => action => {
-    // agrupamos lo que vamos a mostrar en
-    // consola usando el tipo de la acción
-    console.group(action.type);
-    // mostramos el estado actual del store
-    console.debug('current state', store.getState());
-  
-    // mostramos la acción despachada
-    console.debug('action', action);
-  
-    // empezamos a contar cuanto se tarda en
-    // aplicar la acción
-    console.time('duration');
-  
-    // pasamos la acción al store
-    next(action);
-  
-    // terminamos de contar
-    console.timeEnd('duration');
-  
-    // mostramos el estado nuevo
-    console.debug('new state', store.getState());
-    // terminamos el grupo
-    console.groupEnd();
-};
-*/
-
 const checkLogin = store => next => action => {
 
-    //Cookies("userData", {data: "myData"});
-
-    const cookieStrUserData = Cookies.get("userData");
-    const cookieUserData = cookieStrUserData ? JSON.parse(cookieStrUserData) : null;
+    const storedStrUserData = localStorage.getItem("userData");
+    const storedUserData = storedStrUserData ? JSON.parse(storedStrUserData) : null;
     let flag = false;
 
-    if(cookieUserData && cookieUserData.id) {
+    if(storedUserData && storedUserData.token) {
         
         const {userData} = store.getState().sign;
 
-        if(!userData || !userData.id){
+        if(!userData || !userData.token){
             flag = true;
             next(action);
-            store.dispatch(setUserDataFromCookie(cookieUserData));
+            store.dispatch(setUserDataFromStorage(storedUserData));
         }
     }
 
@@ -62,23 +30,25 @@ const checkLogin = store => next => action => {
     if(!flag)
         next(action);
 
-    if(location && location.pathname !== "/sign" && (!userData || !userData.id))
+    if(location && location.pathname !== "/sign" && (!userData || !userData.token))
         history.push("/sign");
     
 };
 
-const middleware = [thunk, checkLogin, /*logger, */createCookieMiddleware(Cookies), routerMiddleware(history)];
+const middleware = [thunk, checkLogin, routerMiddleware(history)];
 
-export default function configureStore(preloadedState, cookiesPath) {
+export default function configureStore(preloadedState) {
 
     const store = createStore(
-        rootReducer(history), 
-        preloadedState, 
-        compose(
-            applyMiddleware(
-                ...middleware
-            )
-        )
+      rootReducer(history),
+      preloadedState,
+      window.__REDUX_DEVTOOLS_EXTENSION__
+        ? compose(
+            applyMiddleware(...middleware),
+            window.__REDUX_DEVTOOLS_EXTENSION__ &&
+              window.__REDUX_DEVTOOLS_EXTENSION__({ trace: true })
+          )
+        : compose(applyMiddleware(...middleware))
     );
 
     return store;

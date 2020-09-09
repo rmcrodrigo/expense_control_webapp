@@ -1,6 +1,5 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Alert, Collapse} from 'react-bootstrap';
 
 class SuccessMsg extends React.Component {
 
@@ -34,14 +33,14 @@ class SuccessMsg extends React.Component {
             return null;
 
         return (
-            <Collapse in={this.state.open} unmountOnExit={true}>
+            <div className="collapse" in={this.state.open} unmountOnExit={true}>
                 <div>
                     {this.hideMsg()}
-                    <Alert variant="success">
+                    <div className="alert alert-success">
                         <p>{msg}</p>
-                    </Alert>
+                    </div>
                 </div>
-            </Collapse>
+            </div>
         )
     }
 }

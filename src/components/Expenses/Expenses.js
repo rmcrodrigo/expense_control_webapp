@@ -1,127 +1,194 @@
-import React from 'react';
+/* eslint-disable no-use-before-define */
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
-import { Button, Card} from 'react-bootstrap';
 
-import { getAllExpensesRq, delExpenseRq } from '../../actions/expensesActions';
-import { getUserCategoriesRq } from '../../actions/categoryActions';
+import {
+  getAllExpensesRq,
+  delExpenseRq,
+  resetExpenseError,
+} from '../../actions/expensesActions';
+import { getUserCategoriesByTypeRq } from '../../actions/categoryActions';
 import { NoResultsTable } from '../Errors';
+
+import DatesContainer from '../Util/DatesContainer/DatesContainer';
 import ExpenseList from './ExpenseList/ExpenseList';
 import NoCategoriesMsg from '../Categories/NoCategoriesMsg/NoCategoriesMsg';
-import DatesContainer from '../Util/DatesContainer/DatesContainer';
+import { SimpleError } from '../Errors';
+
 import './Expenses.css';
 
-class Expenses extends React.Component {
+const Expenses = ({
+  categories,
+  delExpenseRq,
+  expenseErrors,
+  expenses,
+  getAllExpensesRq,
+  getUserCategoriesByTypeRq,
+  history,
+  userToken,
+}) => {
 
-    componentDidMount() {
-        this.callGetExpensesRq("month", null, null, new Date(), true);
-    }
+  const _tempDate = new Date().getTime();
+  const [endDate, setEndDate] = useState(_tempDate);
+  const [mode, setMode] = useState("month");
+  const [startDate, setStartDate] = useState(_tempDate);
+  const [startMonth, setStartMonth] = useState(_tempDate);
 
-    callGetExpensesRq = (type, endDate, startDate, startMonth, categoriesFlag) => {
+  useEffect(() => {
+    getUserCategoriesByTypeRq(1, userToken);
+  }, []);
 
-        let from = null;
-        let to = null;
-        if(type==="month"){
-            from = new Date(startMonth.getFullYear(), startMonth.getMonth(), 1);
-            to = new Date(from);
-            to.setMonth(to.getMonth() + 1);
-            to.setDate(to.getDate() - 1);
-            from = from.getTime();
-            to = to.getTime();
-        } else {
-            from = startDate.getTime();
-            to = endDate.getTime();
-        }
+  useEffect(() => {
+    if (categories && categories.length > 0) {
 
-        const { userId, getAllExpensesRq, getUserCategoriesRq} = this.props;
-
-        if (userId) {
-            if(categoriesFlag)
-                getUserCategoriesRq(userId, getAllExpensesRq, from, to);
-            else
-                getAllExpensesRq(userId, from, to);
-        }
-    }
-
-    goAddExpenseForm = (e) => {
-        e.preventDefault();
-        this.props.history.push("/expenses/add");
-    }
-
-    renderExpenseList = () => {
-        const { categories, delExpenseRq, expenseList } = this.props;
-
-        if (!expenseList || expenseList.length < 1)
-            return (
-                <NoResultsTable />
-            );
-
-        return (
-            <ExpenseList
-                categories={categories}
-                delExpenseRq={delExpenseRq}
-                expenseList={expenseList}
-            />
-        )
-    }
-
-    searchExpenses = (type, endDate, startDate, startMonth) => {
-        this.callGetExpensesRq(type, endDate, startDate, startMonth);
-    }
-
-    render() {
-
-        const { categories } = this.props;
-
-        return (
-            <Card className="card-container">
-                {
-                    categories && categories.length > 0
-                        ? <React.Fragment>
-                            <Card.Header>
-                                <Card.Title className="card-title">
-                                    <h1>Lista de gastos</h1>
-                                </Card.Title>
-                            </Card.Header>
-                            <Card.Body>
-                                <DatesContainer
-                                    searchAction={this.searchExpenses} />
-                                {this.renderExpenseList()}
-                                <Button
-                                    type="button"
-                                    variant="primary"
-                                    onClick={this.goAddExpenseForm}
-                                    className="add-button">Agregar gasto</Button>
-                            </Card.Body>
-                        </React.Fragment>
-                        : <NoCategoriesMsg />
-                }
-            </Card>
+      const datesFormData = JSON.parse(localStorage.getItem('datesFormData'));
+      if (
+        datesFormData &&
+        datesFormData.mode &&
+        datesFormData.values &&
+        datesFormData.values.endDate &&
+        datesFormData.values.startDate &&
+        datesFormData.values.startMonth
+      ) {
+        callGetExpensesRq(
+          datesFormData.mode,
+          new Date(datesFormData.values.endDate),
+          new Date(datesFormData.values.startDate),
+          new Date(datesFormData.values.startMonth)
         );
+        setEndDate(datesFormData.values.endDate);
+        setMode(datesFormData.mode);
+        setStartDate(datesFormData.values.startDate);
+        setStartMonth(datesFormData.values.startMonth);
+        localStorage.removeItem('datesFormData');
+      } else callGetExpensesRq('month', new Date(endDate), new Date(startDate), new Date(startMonth));
     }
-}
+  }, [categories]);
+
+  if (!categories || categories.length < 1) return <NoCategoriesMsg />;
+
+  const callGetExpensesRq = (type, endDate, startDate, startMonth) => {
+    let from = null;
+    let to = null;
+
+    if (type === 'month') {
+      from = new Date(startMonth.getFullYear(), startMonth.getMonth(), 1);
+      to = new Date(from);
+      to.setMonth(to.getMonth() + 1);
+      to.setDate(to.getDate() - 1);
+      from = from.getTime();
+      to = to.getTime();
+    } else {
+      from = startDate.getTime();
+      to = endDate.getTime();
+    }
+    getAllExpensesRq(userToken, from, to);
+  };
+
+  const goExpenseForm = (e, expenseId) => {
+    e.preventDefault();
+    const _tempData = {
+      mode,
+      values: {
+        endDate,
+        startDate,
+        startMonth
+      }
+    };
+
+    localStorage.setItem("datesFormData", JSON.stringify(_tempData));
+
+    if(expenseId)
+      history.push(`/expenses/edit/${expenseId}`);
+    else
+      history.push('/expenses/add');
+  };
+
+  const renderExpenseErrors = () => {
+    if (!expenses || expenses.length < 1)
+      return (
+        <SimpleError
+          callback={resetExpenseError}
+          errors={expenseErrors}
+          timeout={5000}
+        />
+      );
+  };
+
+  const renderExpenseList = () => {
+    if (!expenses || expenses.length < 1) return <NoResultsTable />;
+
+    return (
+      <ExpenseList
+        categories={categories}
+        delExpenseRq={delExpenseRq}
+        expenses={expenses}
+        goExpenseForm={goExpenseForm}
+        userToken={userToken}
+      />
+    );
+  };
+
+  const searchExpenses = (_mode, _endDate, _startDate, _startMonth) => {
+    setEndDate(_endDate.getTime());
+    setMode(_mode);
+    setStartDate(_startDate.getTime());
+    setStartMonth(_startMonth.getTime());
+    callGetExpensesRq(_mode, _endDate, _startDate, _startMonth);
+  };
+
+  return (
+    <div className="card card-container">
+      <React.Fragment>
+        <div className="card-header">
+          <div className="card-title">
+            <h1>Lista de gastos</h1>
+          </div>
+        </div>
+        <div className="card-body">
+          {renderExpenseErrors()}
+          <DatesContainer
+            searchAction={searchExpenses}
+            userToken={userToken}
+          />
+          {renderExpenseList()}
+          <button
+            type="button"
+            id="add"
+            onClick={goExpenseForm}
+            className="btn btn-primary add-button"
+          >
+            Agregar gasto
+          </button>
+        </div>
+      </React.Fragment>
+    </div>
+  );
+};
 
 Expenses.propTypes = {
-    categories: PropTypes.array.isRequired,
-    delExpenseRq: PropTypes.func.isRequired,
-    expenseErrors: PropTypes.object,
-    expenseList: PropTypes.array.isRequired,
-    fetchedCategories: PropTypes.bool.isRequired,
-    fetchedExpenses: PropTypes.bool.isRequired,
-    fetchingExpenses: PropTypes.bool.isRequired,
-    getAllExpensesRq: PropTypes.func.isRequired,
-    getUserCategoriesRq: PropTypes.func.isRequired,
-    userId: PropTypes.number.isRequired
-}
+  categories: PropTypes.array,
+  delExpenseRq: PropTypes.func.isRequired,
+  expenseErrors: PropTypes.array,
+  expenses: PropTypes.array,
+  getAllExpensesRq: PropTypes.func.isRequired,
+  getUserCategoriesByTypeRq: PropTypes.func.isRequired,
+  userToken: PropTypes.string.isRequired,
+};
 
-const mapStateToProps = state => ({
-    categories: state.category.categories,
-    expenseErrors: state.expense.expenseErrors,
-    expenseList: state.expense.expenseList,
-    fetchedCategories: state.category.fetchedCategories,
-    fetchedExpenses: state.expense.fetchedExpenses,
-    fetchingExpenses: state.expense.fetchingExpenses,
-    userId: state.sign.userId
-})
+const mapDispatchToProps = {
+  getAllExpensesRq,
+  getUserCategoriesByTypeRq,
+  delExpenseRq,
+};
 
-export default connect(mapStateToProps, { getAllExpensesRq, getUserCategoriesRq, delExpenseRq })(Expenses);
+const mapStateToProps = (state) => ({
+  categories: state.category.categories,
+  expenseErrors: state.expense.expenseErrors,
+  expenses: state.expense.expenses,
+  userToken: state.sign.userData.token,
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(Expenses);

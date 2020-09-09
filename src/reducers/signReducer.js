@@ -1,6 +1,6 @@
 import {
     RESET_ERROR, RESET_SUCCESS_MESSAGE,
-    SET_USERDATA_FROM_COOKIE,
+    SET_USERDATA_FROM_STORAGE,
     SIGN_ERROR,
     SIGNIN_RQ, SIGNIN_SUCCESS,
     SIGNUP_RQ, SIGNUP_SUCCESS,
@@ -13,11 +13,9 @@ const initialState = {
         showLoginForm: true,
         showNewUserForm: false
     },
-    signedIn: false,
-    signError: null,
+    signErrors: null,
     signUpMsg: null,
-    userData: {},
-    userId: 0
+    userData: {}
 };
 
 export default function(state = initialState, action) {
@@ -26,7 +24,7 @@ export default function(state = initialState, action) {
         case RESET_ERROR:
             lState = {
                 ...state,
-                signError: null
+                signErrors: null
             };
             break;
         case RESET_SUCCESS_MESSAGE:
@@ -35,39 +33,36 @@ export default function(state = initialState, action) {
                 signUpMsg: null
             };
             break;
-        case SET_USERDATA_FROM_COOKIE:
+        case SET_USERDATA_FROM_STORAGE:
             lState = {
                 ...state,
-                userData : action.payload,
-                userId: action.payload.id
+                userData : action.payload
             };
             break;
         case SIGN_ERROR:
             lState = {
                 ...state,
-                signError: action.payload,
-                signedIn: false
+                signErrors: action.payload,
+                userData: null
             };
             break;
         case SIGNIN_RQ: 
             lState = {
                 ...state,
-                signError: null,
-                signedIn: false
+                signErrors: null,
+                userData: null
             };
             break;
         case SIGNIN_SUCCESS:
             lState = {
                 ...state,
-                signedIn: true,
-                userData: action.payload,
-                userId: action.payload.id
+                userData: action.payload
             };
             break;
         case SIGNUP_RQ:
             lState = {
                 ...state,
-                signError: null
+                signErrors: null
             };
             break;
         case SIGNUP_SUCCESS:

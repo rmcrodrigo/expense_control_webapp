@@ -1,38 +1,55 @@
 import React from 'react';
-import {Button} from 'react-bootstrap';
-import {Link} from 'react-router-dom';
+import PropTypes from 'prop-types';
+import { Link } from 'react-router-dom';
 
+const Category = ({ category, delCategoryRq, userToken }) => {
+  const categoryTypeTitle = {
+    1: 'Gasto',
+    2: 'Ingreso',
+  };
 
-const Category = props => {
+  const delCategory = (id) => {
+    if (window.confirm('Estas seguro de que deseas eliminar este registro?'))
+      delCategoryRq(id, userToken);
+  };
 
-    const {category, delCategoryRq} = props;
+  return (
+    <tr className="data-info">
+      <td>
+        <p>{category.name}</p>
+      </td>
+      <td>
+        <p>{category.description}</p>
+      </td>
+      <td>
+        <p>{categoryTypeTitle[category.type]}</p>
+      </td>
+      <td className="text-center">
+        <button
+          type="button"
+          className="btn btn-sm btn-danger"
+          onClick={() => {
+            delCategory(category.id);
+          }}
+        >
+          Eliminar
+        </button>
+        <Link
+          style={{ marginLeft: 5 }}
+          to={`/categories/edit/${category.id}`}
+          className="btn btn-sm btn-dark"
+        >
+          Editar
+        </Link>
+      </td>
+    </tr>
+  );
+};
 
-    const delCategory = id => {
-        if(window.confirm("Estas seguro de que deseas eliminar este registro?"))
-            delCategoryRq(id);
-    }
+Category.propTypes = {
+  category: PropTypes.object.isRequired,
+  delCategoryRq: PropTypes.func.isRequired,
+  userToken: PropTypes.string.isRequired
+};
 
-    return (
-        <tr className="data-info">
-            <td><p>{category.name}</p></td>
-            <td><p>{category.description}</p></td>
-            <td className="text-center">
-                <Button
-                    type="button"
-                    className="btn-sm"
-                    variant="danger"
-                    onClick={() => {delCategory(category.id)}}>
-                    Eliminar
-                </Button>
-                <Link 
-                    style={{marginLeft: 5}}
-                    to={`/categories/edit/${category.id}`}
-                    className="btn btn-sm btn-dark">
-                    Editar
-                </Link>
-            </td>
-        </tr>
-    );
-}
-
-export default Category;
+export default React.memo(Category);

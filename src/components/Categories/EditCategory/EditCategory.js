@@ -1,64 +1,90 @@
-import React from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect } from 'react';
 import PropTypes from 'prop-types';
-import {connect} from 'react-redux';
-import {Card} from 'react-bootstrap';
+import { connect } from 'react-redux';
 
-import {editCategoryRq, getCategoryByIdRq, resetCategoriesError} from '../../../actions/categoryActions';
+import {
+  editCategoryRq,
+  getCategoryByIdRq,
+  resetCategoriesError,
+} from '../../../actions/categoryActions';
 import CategoryForm from '../CategoryForm/CategoryForm';
 import '../Categories.css';
-import {SimpleError} from '../../Errors';
+import { SimpleError } from '../../Errors';
 
-class EditCategory extends React.Component {
-
-    componentDidMount() {
-        
-        const categoryId = this.props.match.params.id;
-        const {fetchingCategory, getCategoryByIdRq} = this.props;
-
-        if(!fetchingCategory)
-            getCategoryByIdRq(categoryId);
+const EditCategory = ({
+  category,
+  categoryErrors,
+  editCategoryRq,
+  getCategoryByIdRq,
+  history,
+  match,
+  resetCategoriesError,
+  userToken,
+}) => {
+  useEffect(() => {
+    const categoryId = match.params.id;
+    if (categoryId && !category) {
+      getCategoryByIdRq(categoryId, userToken);
     }
+  }, []);
 
-    render() {
+  if (!category || !category.id)
+    return (
+      <div className="alert alert-danger">
+        No se encontro la categoria que desea modificar
+      </div>
+    );
 
-        const {editCategoryRq, category, categoryErrors, history, resetCategoriesError} = this.props;
+  const renderCategoryErrors = () => {
+    if (categoryErrors && categoryErrors.length > 0)
+      return (
+        <SimpleError
+          callback={resetCategoriesError}
+          errors={categoryErrors}
+          timeout={5000}
+        />
+      );
 
-        return (
-            <Card className="add-category-container">
-                <Card.Body>
-                    <Card.Title className="card-title">Agregar categoria</Card.Title>
-                    <SimpleError
-                        callback={resetCategoriesError}
-                        errorObj={categoryErrors}
-                        timeout={5000} />
-                    <CategoryForm
-                        actionForm="edit"
-                        editCategoryRq={editCategoryRq}
-                        category={category}
-                        history={history}
-                        userId={this.props.userId}
-                     />
-                </Card.Body>
-            </Card>
-        );
-    }
-}
+    return null;
+  };
+
+  return (
+    <div className="card add-category-container">
+      <div className="card-body">
+        <div className="card-title h2 mb-4">Agregar categoria</div>
+        {renderCategoryErrors()}
+        <CategoryForm
+          actionForm="edit"
+          category={category}
+          categoryErrors={categoryErrors}
+          editCategoryRq={editCategoryRq}
+          history={history}
+          resetCategoriesError={resetCategoriesError}
+          userToken={userToken}
+        />
+      </div>
+    </div>
+  );
+};
 
 EditCategory.propTypes = {
-    category: PropTypes.object.isRequired,
-    categoryErrors: PropTypes.object,
-    editCategoryRq: PropTypes.func.isRequired,
-    fetchingCategory: PropTypes.bool.isRequired,
-    getCategoryByIdRq: PropTypes.func.isRequired,
-    resetCategoriesError: PropTypes.func.isRequired,
-    userId: PropTypes.number.isRequired
-}
+  category: PropTypes.object,
+  categoryErrors: PropTypes.array,
+  editCategoryRq: PropTypes.func.isRequired,
+  getCategoryByIdRq: PropTypes.func.isRequired,
+  resetCategoriesError: PropTypes.func.isRequired,
+  userToken: PropTypes.string.isRequired,
+};
 
-const mapStateToProps = state => ({
-    category: state.category.category,
-    categoryErrors: state.category.categoryErrors,
-    fetchingCategory: state.category.fetchingCategory,
-    userId: state.sign.userId
-})
+const mapStateToProps = (state) => ({
+  category: state.category.category,
+  categoryErrors: state.category.categoryErrors,
+  userToken: state.sign.userData.token,
+});
 
-export default connect(mapStateToProps, {editCategoryRq, getCategoryByIdRq, resetCategoriesError})(EditCategory);
+export default connect(mapStateToProps, {
+  editCategoryRq,
+  getCategoryByIdRq,
+  resetCategoriesError,
+})(EditCategory);

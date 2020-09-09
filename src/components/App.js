@@ -1,27 +1,26 @@
 import React from 'react';
 import { ConnectedRouter } from 'connected-react-router';
-import { withCookies } from 'react-cookie';
 import PropTypes from 'prop-types';
 import './App.css';
 
-import routes from '../routes';
+import Routes from '../routes';
 import Navbar from './Navbar/NavbarHeader';
+import LoadingSpinner from './Util/LoadingSpinner';
 
-class App extends React.Component {
-
-    render(){
-
-        return (
-            <ConnectedRouter history={this.props.history}>
-                <Navbar />
-                {routes}
-            </ConnectedRouter>
-        );
-    }
+function App({ history }) {
+  return (
+    <ConnectedRouter history={history}>
+      <Navbar />
+      <div className="main-container">
+        <Routes />
+      </div>
+      <LoadingSpinner />
+    </ConnectedRouter>
+  );
 }
 
 App.propTypes = {
-    history: PropTypes.object.isRequired
-}
+  history: PropTypes.object.isRequired,
+};
 
-export default withCookies(App);
+export default App;

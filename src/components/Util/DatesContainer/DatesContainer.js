@@ -1,125 +1,153 @@
-import React from 'react';
-import { Button, Tab, Tabs } from 'react-bootstrap';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect, useState } from 'react';
 import DatePicker from 'react-datepicker';
 import PropTypes from 'prop-types';
 
-class DatesContainer extends React.Component {
+import { TabPanel, Tabs } from '../../Util/Tabs/Tabs';
 
-    state = {
-        startMonth: new Date(),
-        startDate: new Date(),
-        endDate: new Date(new Date().setDate(new Date().getDate() + 1))
+const DatesContainer = ({ searchAction, userToken }) => {
+
+  const [mode, setMode] = useState('month');
+  const [startMonth, setStartMonth] = useState(new Date());
+  const [startDate, setStartDate] = useState(new Date());
+  
+  const [endDate, setEndDate] = useState(
+    new Date(new Date().setDate(new Date().getDate() + 1))
+  );
+
+  const tabs = [
+    {
+      disabled: false,
+      id: 'month',
+      title: 'Mes'
+    },
+    {
+      disabled: false,
+      id: 'range',
+      title: 'Rango de fechas'
     }
+  ]
 
-    handleChangeEndDate = (date) => {
-        const { startDate } = this.state;
-        if (date < startDate)
-            this.setState({
-                startDate: date,
-                endDate: date
-            });
-        else
-            this.setState({
-                endDate: date
-            });
+  useEffect(() => {
+    const datesFormData = JSON.parse(localStorage.getItem('datesFormData'));
+    if (
+      datesFormData &&
+      datesFormData.mode &&
+      datesFormData.values &&
+      datesFormData.values.endDate &&
+      datesFormData.values.startDate &&
+      datesFormData.values.startMonth
+    ) {
+      setMode(datesFormData.mode);
+      setEndDate(new Date(datesFormData.values.endDate));
+      setStartMonth(new Date(datesFormData.values.startMonth));
+      setStartDate(new Date(datesFormData.values.startDate));
     }
+  }, []);
 
-    handleChangeMonth = (date) => {
-        this.setState({
-            startMonth: date
-        });
+  const handleChangeEndDate = (date) => {
+    if (date < startDate) {
+      setStartDate(date);
+      setEndDate(date);
+    } else {
+      setEndDate(date);
     }
+  };
 
-    handleChangeStartDate = (date) => {
-        const { endDate } = this.state;
-        if (date > endDate)
-            this.setState({
-                startDate: date,
-                endDate: date
-            });
-        else
-            this.setState({
-                startDate: date
-            });
+  const handleChangeMonth = (date) => {
+    setStartMonth(date);
+  };
+
+  const handleChangeStartDate = (date) => {
+    if (date > endDate) {
+      setStartDate(date);
+      setEndDate(date);
+    } else {
+      setStartDate(date);
     }
+  };
 
-    searchAction = (e) => {
-        const {endDate, startDate, startMonth} = this.state;
-        this.props.searchAction(e.target.value, endDate, startDate, startMonth);
-    }
+  const handleTabChange = (event, newValue) => {
+    event.preventDefault();
+    setMode(newValue);
+  };
 
-    render(){
+  const _searchAction = (e) => {
+    searchAction(e.target.value, endDate, startDate, startMonth, userToken);
+  };
 
-        const {endDate, startDate, startMonth} = this.state;
-
-        return (
-            <div className="tabs-container">
-                <label>Filtrar movimientos por:</label>
-                <div className="all-tab-content">
-                    <Tabs bsPrefix="nav nav-tabs" defaultActiveKey="month" >
-                        <Tab eventKey="month" title="Mes">
-                            <DatePicker
-                                className="form-control"
-                                dateFormat="MM/yyyy"
-                                onChange={this.handleChangeMonth}
-                                selected={startMonth}
-                                showMonthYearPicker
-                            />
-                            <Button
-                                className="btn-sm"
-                                onClick={this.searchAction}
-                                style={{marginLeft: 10}}
-                                type="button"
-                                value="month"
-                                variant="secondary">
-                                Buscar
-                            </Button>
-                        </Tab>
-                        <Tab className="range-inputs-container" eventKey="range" title="Rango de fechas">
-                            <label>De:</label>
-                            <DatePicker
-                                className="form-control"
-                                dateFormat="yyyy/MM/dd"
-                                endDate={endDate}
-                                name="fromDate"
-                                onChange={this.handleChangeStartDate}
-                                placeholderText="yyyy/mm/dd"
-                                selected={startDate}
-                                selectsStart
-                                startDate={startDate}
-                                showYearDropdown
-                            />
-                            <label>a:</label>
-                            <DatePicker
-                                className="form-control"
-                                dateFormat="yyyy/MM/dd"
-                                endDate={endDate}
-                                name="toDate"
-                                onChange={this.handleChangeEndDate}
-                                placeholderText="yyyy/mm/dd"
-                                selected={endDate}
-                                selectsEnd
-                                startDate={startDate}
-                                showYearDropdown
-                            />
-                            <Button
-                                className="btn-sm"
-                                onClick={this.searchAction}
-                                style={{marginLeft: 10}}
-                                type="button"
-                                variant="secondary">
-                                Buscar
-                            </Button>
-                        </Tab>
-                    </Tabs>
-                </div>
-            </div>
-        )
-    }
-}
+  return (
+    <div className="tabs-container">
+      <label>Filtrar movimientos por:</label>
+      <Tabs tabs={tabs} value={mode} onChange={handleTabChange} />
+      <div className="all-tab-content">
+        <TabPanel className="month-inputs-container" id="month" value={mode}>
+          <>
+            <DatePicker
+              className="form-control"
+              dateFormat="MM/yyyy"
+              onChange={handleChangeMonth}
+              selected={startMonth}
+              showMonthYearPicker
+            />
+            <button
+              className="btn btn-sm btn-info"
+              onClick={_searchAction}
+              style={{ marginLeft: 10 }}
+              type="button"
+              value="month"
+            >
+              Buscar
+            </button>
+          </>
+        </TabPanel>
+        <TabPanel className="range-inputs-container" id="range" value={mode}>
+          <>
+            <label>De:</label>
+            <DatePicker
+              className="form-control"
+              dateFormat="yyyy/MM/dd"
+              endDate={endDate}
+              name="fromDate"
+              onChange={handleChangeStartDate}
+              placeholderText="yyyy/mm/dd"
+              selected={startDate}
+              selectsStart
+              startDate={startDate}
+              showYearDropdown
+            />
+            <label>a:</label>
+            <DatePicker
+              className="form-control"
+              dateFormat="yyyy/MM/dd"
+              endDate={endDate}
+              name="toDate"
+              onChange={handleChangeEndDate}
+              placeholderText="yyyy/mm/dd"
+              selected={endDate}
+              selectsEnd
+              startDate={startDate}
+              showYearDropdown
+            />
+            <button
+              className="btn btn-sm btn-info"
+              onClick={_searchAction}
+              style={{ marginLeft: 10 }}
+              type="button"
+              value="range"
+            >
+              Buscar
+            </button>
+          </>
+        </TabPanel>
+      </div>
+    </div>
+  );
+};
 
 DatesContainer.propTypes = {
-    searchAction: PropTypes.func.isRequired
-}
+  searchAction: PropTypes.func.isRequired,
+  userToken: PropTypes.string.isRequired
+};
 
 export default DatesContainer;

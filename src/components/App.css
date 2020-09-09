@@ -1,13 +1,11 @@
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
   margin: 0px;
   padding: 0px;
-	font-family: Poppins-Regular, sans-serif;
-  background: #9053c7;
-  background: -webkit-linear-gradient(-135deg, #c850c0, #4158d0);
-  background: -o-linear-gradient(-135deg, #c850c0, #4158d0);
-  background: -moz-linear-gradient(-135deg, #c850c0, #4158d0);
-  background: linear-gradient(-135deg, #c850c0, #4158d0);
+  font-family: Poppins-Regular, sans-serif;
+  background: #A7CFE8;
 }
 
 .App {
@@ -16,8 +14,12 @@ html, body, #root {
   padding: 0px;
 }
 
+.main-container {
+  margin-top: 65px;
+}
+
 .hidden {
-  display: none
+  display: none;
 }
 
 .input-error {
@@ -40,7 +42,7 @@ html, body, #root {
   float: right;
 }
 
-.add-action-buttons .add-button{
+.add-action-buttons .add-button {
   margin-left: 5px;
 }
 
@@ -62,38 +64,38 @@ table th {
 }
 
 .tabs-container {
-    margin-bottom: 20px;
+  margin-bottom: 20px;
 }
 
 .tabs-container .all-tab-content {
-    margin-left: 10px;
-    border: 1px solid #dee2e6;
-    border-radius: 5px;
-    padding: 0 10px 10px 9px;
+  margin-top: -1px;
+  border: 1px solid #dee2e6;
+  border-radius: 0 0 10px 10px;
+  padding: 15px;
 }
 
-.tabs-container input[type="text"]{
-    width: 118px;
+.tabs-container input[type='text'] {
+  width: 118px;
 }
 
-.tabs-container .tab-content{
-    margin-top: 20px;
+.tabs-container .tab-content {
+  margin-top: 20px;
 }
 
 .tabs-container .nav-tabs {
-    margin-top: -1px;
-    border-bottom: 1px solid #dee2e6;
+  margin-top: -1px;
+  border-bottom: 1px solid #dee2e6;
 }
 
 .range-inputs-container {
-    margin-left: 5px;
-    margin-bottom: 10px;
+  margin-left: 5px;
+  margin-bottom: 10px;
 }
 
 .range-inputs-container label {
-    margin: 0 5px 0 5px;
+  margin: 0 5px 0 5px;
 }
 
-.range-inputs-container input[type="text"]:last-child{
-    margin-left: 5px;
+.range-inputs-container input[type='text']:last-child {
+  margin-left: 5px;
 }

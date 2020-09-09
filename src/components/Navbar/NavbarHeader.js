@@ -1,62 +1,69 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Nav, Navbar, NavDropdown} from 'react-bootstrap';
-import {connect} from 'react-redux';
-import {withCookies} from 'react-cookie';
+import { connect } from 'react-redux';
+import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
 
-import {getUserCategoriesRq} from '../../actions/categoryActions';
+import { getUserCategoriesRq } from '../../actions/categoryActions';
 import './NavbarHeader.css';
 
-class NavbarHeader extends React.Component {
+const NavbarHeader = ({ userData }) => {
 
-    logout = (e) => {
-        e.preventDefault();
-        this.props.cookies.remove("userData");
-        window.location.reload();
-    }
+  const logout = (e) => {
+    e.preventDefault();
+    localStorage.removeItem('userData');
+    window.location.reload();
+  };
 
-    renderNavbar = () => {
+  const renderNavbar = () => {
+    return (
+      <Navbar
+        bg="light"
+        expand="lg"
+        fixed="top"
+      >
+        <Navbar.Brand href="/">
+          Control de gastos
+        </Navbar.Brand>
+        <Navbar.Toggle />
+        <Navbar.Collapse id="basic-navbar">
+          <Nav className="mr-auto">
+            <Nav.Link href="/categories">
+              Categorias
+            </Nav.Link>
+            <Nav.Link href="/expenses">
+              Gastos
+            </Nav.Link>
+            <Nav.Link href="/incomes">
+                Ingresos
+            </Nav.Link>
+          </Nav>
+          <NavDropdown title={userData.name} id="basic-nav-dropdown">
+            <NavDropdown.Item>
+              Mi cuenta
+            </NavDropdown.Item>
+            <NavDropdown.Divider />
+            <NavDropdown.Item onClick={logout}>
+              Cerrar sesi&oacute;n
+            </NavDropdown.Item>
+          </NavDropdown>
+        </Navbar.Collapse>
+      </Navbar>
+    );
+  };
 
-        const {userData} = this.props;
+  const lNavbar = userData && userData.token ? renderNavbar() : null;
 
-        return (
-            <Navbar bg="light" expand="lg">
-                <Navbar.Brand href="/">Control de gastos</Navbar.Brand>
-                <Navbar.Toggle aria-controls="basic-navbar-nav" />
-                <Navbar.Collapse id="basic-navbar-nav">
-                    <Nav className="mr-auto">
-                        <Nav.Link href="/categories">Categorias</Nav.Link>
-                        <Nav.Link href="/">Gastos</Nav.Link>
-                        <Nav.Link href="/income">Ingresos</Nav.Link>
-                    </Nav>
-                    <NavDropdown title={userData.name} id="basic-nav-dropdown">
-                        <NavDropdown.Item href="#action/3.1">Mi cuenta</NavDropdown.Item>
-                        <NavDropdown.Divider />
-                        <NavDropdown.Item onClick={this.logout}>Cerrar sesi&oacute;n</NavDropdown.Item>
-                    </NavDropdown>
-                </Navbar.Collapse>
-            </Navbar>
-        )
-    }
-
-    render(){
-
-        const lNavbar =  this.props.userData && this.props.userData.id ? this.renderNavbar() : null;
-
-        return (
-            <React.Fragment>
-                { lNavbar }
-            </React.Fragment>
-        )
-    }
-}
+  return <React.Fragment>{lNavbar}</React.Fragment>;
+};
 
 NavbarHeader.propTypes = {
-    userData: PropTypes.object.isRequired
-}
+  userData: PropTypes.object,
+};
 
-const mapStateToProps = state => ({
-    userData: state.sign.userData
-})
+const mapStateToProps = (state) => ({
+  userData: state.sign.userData,
+});
 
-export default connect(mapStateToProps, {getUserCategoriesRq})(withCookies(NavbarHeader));
+export default connect(mapStateToProps, { getUserCategoriesRq })(
+  React.memo(NavbarHeader)
+);

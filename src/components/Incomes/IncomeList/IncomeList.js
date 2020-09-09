@@ -1,41 +1,53 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import {Table} from 'react-bootstrap';
 import Income from '../Income/Income';
 
-class IncomeList extends React.Component {
+const IncomeList = ({ categores, delIncomeRq, goIncomeForm, incomes, userToken }) => {
 
-    render() {
-        const {delIncomeRq, incomeList} = this.props;
+  const total =
+    incomes && incomes.length > 0
+      ? incomes.reduce((total, gasto) => total + gasto.amount, 0)
+      : 0;
 
-        return (
-            <Table striped bordered hover>
-                <thead className="thead-dark">
-                    <tr>
-                        <th>Fecha</th>
-                        <th>Descripci&oacute;n</th>
-                        <th>Monto</th>
-                        <th>Acci&oacute;n</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    {
-                        incomeList.map(income => (
-                            <Income
-                                delIncomeRq={delIncomeRq}
-                                income={income}
-                                key={income.id} />
-                        ))
-                    }
-                </tbody>
-            </Table>
-        );
-    }
-}
+  return (
+    <React.Fragment>
+      <table className="table table-bordered table-hover table-striped">
+        <thead className="thead-dark">
+          <tr>
+            <th>Fecha</th>
+            <th>Descripci&oacute;n</th>
+            <th>Categoria</th>
+            <th>Monto</th>
+            <th>Acci&oacute;n</th>
+          </tr>
+        </thead>
+        <tbody>
+          {incomes.map((income) => (
+            <Income
+              categories={categores}
+              delIncomeRq={delIncomeRq}
+              goIncomeForm={goIncomeForm}
+              income={income}
+              key={income.id}
+              userToken={userToken}
+            />
+          ))}
+        </tbody>
+      </table>
+      <div style={{ fontSize: 18, textAlign: 'right', marginBottom: 10 }}>
+        <span style={{ fontWeight: 'bolder' }}>Total:</span> {total}
+      </div>
+    </React.Fragment>
+  );
+  
+};
 
 IncomeList.propTypes = {
-    delIncomeRq: PropTypes.func.isRequired,
-    incomeList: PropTypes.array.isRequired
-}
+  categores: PropTypes.array.isRequired,
+  delIncomeRq: PropTypes.func.isRequired,
+  goIncomeForm: PropTypes.func.isRequired,
+  incomes: PropTypes.array.isRequired,
+  userToken: PropTypes.string.isRequired,
+};
 
 export default IncomeList;

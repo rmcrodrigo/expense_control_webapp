@@ -1,207 +1,255 @@
-import React from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect, useState } from 'react';
 import PropTypes from 'prop-types';
-import {Button, Form} from 'react-bootstrap';
 import DatePicker from 'react-datepicker';
-import {SimpleError} from '../../Errors';
+import { SimpleError } from '../../Errors';
 
-class IncomeForm extends React.Component {
+import NoCategoriesMsg from '../../Categories/NoCategoriesMsg/NoCategoriesMsg';
 
-    state = {
-        amount: "",
-        amountError: false,
-        description: "",
-        descriptionError: false,
-        incomeDate: new Date(),
-        incomeDateError: false
+const IncomeForm = ({
+  actionForm,
+  addIncomeRq,
+  categories,
+  editIncomeRq,
+  history,
+  income,
+  incomeErrors,
+  resetIncomeErrors,
+  userToken,
+}) => {
+  const [amount, setAmount] = useState('');
+  const [amountError, setAmountError] = useState(false);
+  const [category, setCategory] = useState('');
+  const [categoryError, setCategoryError] = useState(false);
+  const [description, setDescription] = useState('');
+  const [descriptionError, setDescriptionError] = useState(false);
+  const [formError, setFormError] = useState(null);
+  const [hasFormError, setHasFormError] = useState(false);
+  const [incomeDate, setIncomeDate] = useState(new Date());
+  const [incomeDateError, setIncomeDateError] = useState(false);
+
+  const stateSetters = {
+    amount: setAmount,
+    amountError: setAmountError,
+    category: setCategory,
+    categoryError: setCategoryError,
+    description: setDescription,
+    descriptionError: setDescriptionError,
+    incomeDate: setIncomeDate,
+    incomeDateError: setIncomeDateError,
+  };
+
+  useEffect(() => {
+    if (income && income.id) {
+      setAmount(income.amount);
+      setCategory(income.categoryId);
+      setDescription(income.description);
+      setIncomeDate(new Date(income.incomeDate));
+    }
+  }, [income]);
+
+  if (!categories || categories.length < 1) return <NoCategoriesMsg />;
+
+  const cancelAction = (e) => {
+    e.preventDefault();
+    history.push('/incomes');
+  };
+
+  const changedInputValue = (e) => {
+    const { name, value } = e.target;
+
+    if (!value) {
+      stateSetters[name](value);
+      stateSetters[name + 'Error'](true);
+      return;
     }
 
-    UNSAFE_componentWillReceiveProps(nextProps) {
-
-        const {income} = nextProps;
-        
-        if(income && income.id)
-            this.setState({
-                amount: income.amount,
-                description: income.description,
-                incomeDate: new Date(income.incomeDate)
-            });
+    if (name === 'amount') {
+      if (validateAmount(value)) {
+        stateSetters[name](value);
+        stateSetters[name + 'Error'](true);
+        return;
+      }
     }
 
-    cancelAction = (e) => {
-        e.preventDefault();
-        this.props.history.push("/income");
+    stateSetters[name](value);
+    stateSetters[name + 'Error'](false);
+  };
+
+  const handleChangeDate = (date) => {
+    setIncomeDate(date);
+  };
+
+  const getIncome = () => {
+    return {
+      amount,
+      categoryId: category,
+      description,
+      incomeDate,
+    };
+  };
+
+  const renderCategories = () => {
+    const categoryId = category;
+
+    if (!categories || categories.length < 1) return null;
+
+    return (
+      <div className="form-group">
+        <label>Categoria</label>
+        <select
+          as="select"
+          name="category"
+          className={'form-control' + (categoryError ? ' input-error' : '')}
+          onChange={changedInputValue}
+          value={categoryId}
+        >
+          <option key="-1" value="">
+            Selecciona una opci&oacute;n
+          </option>
+          {categories.map((category) => (
+            <option key={category.id} value={category.id}>
+              {category.name}
+            </option>
+          ))}
+        </select>
+      </div>
+    );
+  };
+
+  const renderErrors = () => {
+    if (hasFormError || (incomeErrors && incomeErrors.length > 0)) {
+      const errors = hasFormError ? formError : incomeErrors;
+      const resetError = hasFormError
+        ? () => setFormError(null)
+        : resetIncomeErrors;
+      return (
+        <SimpleError callback={resetError} errors={errors} timeout={5000} />
+      );
+    }
+    return <></>;
+  };
+
+  const sendAction = (e) => {
+    e.preventDefault();
+    const lIncome = getIncome();
+
+    if (!validateForm()) return false;
+
+    if (actionForm === 'add') addIncomeRq(lIncome, history, userToken);
+    else {
+      lIncome['id'] = income.id;
+      editIncomeRq(lIncome, history, userToken);
+    }
+  };
+
+  const validateAmount = (amount) => {
+    amount = '' + amount;
+    if (
+      amount.charAt(amount.length - 1) === '.' ||
+      !/^\d+\.?(\d{0,2})$/.test(amount)
+    )
+      return true;
+    return false;
+  };
+
+  const validateForm = () => {
+    let lAmountError = false,
+      lCategoryError = false,
+      lDescriptionError = false,
+      lIncomeDateError = false;
+
+    if (!amount || validateAmount(amount)) lAmountError = true;
+    if (!category) lCategoryError = true;
+    if (!description) lDescriptionError = true;
+    if (!incomeDate) lIncomeDateError = true;
+
+    setAmountError(lAmountError);
+    setCategoryError(lCategoryError);
+    setDescriptionError(lDescriptionError);
+    setIncomeDateError(lIncomeDateError);
+
+    if (
+      lAmountError ||
+      lCategoryError ||
+      lDescriptionError ||
+      lIncomeDateError
+    ) {
+      setHasFormError(true);
+      setFormError(['Los campos marcados en rojo son obligatorios']);
+      return false;
     }
 
-    changedInputValue = (e) => {
+    setHasFormError(false);
+    setFormError(null);
 
-        const {name, value} = e.target;
+    return true;
+  };
 
-        if(!value){
-            this.setState({
-                [name]: value,
-                [name + "Error"]: true
-            });
-            return;
-        }
+  return (
+    <form autoComplete="off" onSubmit={sendAction}>
+      {renderErrors()}
+      {renderCategories()}
+      <div className="form-gorup">
+        <label>Descripci&oacute;n</label>
+        <input
+          className={'form-control' + (descriptionError ? ' input-error' : '')}
+          defaultValue={description}
+          name="description"
+          onChange={changedInputValue}
+          placeholder="Quincena"
+          type="text"
+        />
+      </div>
+      <div className="form-gorup">
+        <label>Monto</label>
+        <input
+          className={'form-control' + (amountError ? ' input-error' : '')}
+          defaultValue={amount}
+          name="amount"
+          onChange={changedInputValue}
+          placeholder="0.00"
+          type="text"
+        />
+      </div>
+      <div className="form-gorup">
+        <label>Fecha</label>
+        <br />
+        <DatePicker
+          className={'form-control' + (incomeDateError ? ' input-error' : '')}
+          dateFormat="yyyy/MM/dd"
+          onChange={handleChangeDate}
+          placeholderText="yyyy/mm/dd"
+          selected={incomeDate}
+          showYearDropdown
+        />
+      </div>
 
-        if(name === "amount"){
-            if(this.validateAmount(value)){
-                this.setState({
-                    [name]: value,
-                    [name + "Error"]: true
-                });
-                return;
-            }
-        }
-
-        this.setState({
-            [name]: value,
-            [name + "Error"]: false
-        })
-    }
-
-    handleChangeDate = (date) => {
-        this.setState({
-            incomeDate: date
-        });
-    }
-
-    getIncome = () => {
-        const {amount, description, incomeDate} = this.state;
-        return {
-            amount,
-            description,
-            incomeDate,
-            user: {
-                id: this.props.userId
-            }
-        };
-    }
-
-    sendAction = (e) => {
-        e.preventDefault();
-        const {actionForm, addIncomeRq, editIncomeRq, history, income} = this.props;
-        const lIncome = this.getIncome();
-        if(!this.validateForm())
-            return false;
-
-        if(actionForm === "add")
-            addIncomeRq(lIncome, history);
-        else {
-            lIncome["id"] = income.id;
-            editIncomeRq(lIncome, history);
-        }
-    }
-
-    validateAmount = (amount) => {
-        amount = "" + amount;
-        if(amount.charAt(amount.length -1 ) === "." || !(/^\d+\.?(\d{0,2})$/.test(amount)))
-            return true;
-        return false;
-    }
-
-    validateForm = () => {
-
-        let amountError = false, descriptionError = false, incomeDateError = false;
-        const {amount, description, incomeDate} = this.state;
-
-        if(!amount || this.validateAmount(amount))
-            amountError = true;
-        if(!description)
-            descriptionError = true;
-        if(!incomeDate)
-            incomeDateError = true;
-
-        this.setState({
-            amountError,
-            descriptionError,
-            incomeDateError
-        });
-
-        if(amountError || descriptionError || incomeDateError)
-            return false;
-
-        return true;
-    }
-
-    render(){
-
-        const {
-            amount,
-            amountError,
-            description,
-            descriptionError, 
-            incomeDate,
-            incomeDateError
-        } = this.state;
-
-        const {incomeErrors, resetIncomeErrors} = this.props;
-
-        return (
-            <Form autoComplete="off"
-                onSubmit={this.sendAction}>
-
-                <SimpleError
-                    callback={resetIncomeErrors}
-                    errorObj={incomeErrors}
-                    timeout={5000} />
-                <Form.Group>
-                    <Form.Label>Descripci&oacute;n</Form.Label>
-                    <Form.Control
-                        className={"form-control" + (descriptionError ? " input-error": "")}
-                        defaultValue={description}
-                        name="description"
-                        onChange={this.changedInputValue}
-                        placeholder="Quincena"
-                        type="text" />
-                </Form.Group>
-                <Form.Group>
-                    <Form.Label>Monto</Form.Label>
-                    <Form.Control
-                        className={"form-control" + (amountError ? " input-error": "")}
-                        defaultValue={amount}
-                        name="amount"
-                        onChange={this.changedInputValue}
-                        placeholder="0.00"
-                        type="text" />
-                </Form.Group>
-                <Form.Group>
-                    <Form.Label>Fecha</Form.Label>
-                    <br/>
-                    <DatePicker
-                        className={"form-control" + (incomeDateError ? " input-error": "")}
-                        dateFormat="yyyy/MM/dd"
-                        onChange={this.handleChangeDate}
-                        placeholderText="yyyy/mm/dd"
-                        selected={incomeDate}
-                        showYearDropdown
-                    />
-                </Form.Group>
-
-                <div className="add-action-buttons">
-                    <Button variant="dark"
-                        className="cancel-add"
-                        onClick={this.cancelAction}
-                        type="button">Cancelar</Button>
-                    <Button variant="primary"
-                        className="add-button"
-                        type="submit">
-                        {this.props.actionForm === "add" ? "Agregar" : "Guardar"}
-                    </Button>
-                </div>
-            </Form>
-        );
-    }
-}
+      <div className="add-action-buttons">
+        <button
+          className="btn btn-dark cancel-add"
+          onClick={cancelAction}
+          type="button"
+        >
+          Cancelar
+        </button>
+        <button className="btn btn-primary add-button" type="submit">
+          {actionForm === 'add' ? 'Agregar' : 'Guardar'}
+        </button>
+      </div>
+    </form>
+  );
+};
 
 IncomeForm.propTypes = {
-    actionForm: PropTypes.string.isRequired,
-    addIncomeRq: PropTypes.func,
-    editIncomeRq: PropTypes.func,
-    income: PropTypes.object,
-    incomeErrors: PropTypes.object,
-    resetIncomeErrors: PropTypes.func.isRequired,
-    userId: PropTypes.number
-}
+  actionForm: PropTypes.string.isRequired,
+  addIncomeRq: PropTypes.func,
+  categories: PropTypes.array.isRequired,
+  editIncomeRq: PropTypes.func,
+  income: PropTypes.object,
+  incomeErrors: PropTypes.array,
+  resetIncomeErrors: PropTypes.func.isRequired,
+  userToken: PropTypes.string.isRequired,
+};
 
 export default IncomeForm;

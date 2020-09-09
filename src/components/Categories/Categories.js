@@ -1,86 +1,105 @@
-import React from 'react';
-import {connect} from 'react-redux';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { useEffect } from 'react';
+import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import {Button, Card} from 'react-bootstrap';
 
-import {addCategoryRq, delCategoryRq, getUserCategoriesRq, resetCategoriesError} from '../../actions/categoryActions';
+import {
+  addCategoryRq,
+  delCategoryRq,
+  getUserCategoriesRq,
+  resetCategoriesError,
+} from '../../actions/categoryActions';
+
 import ListCategories from './ListCategories/ListCategories';
+import { NoResultsTable, SimpleError } from '../Errors';
+
 import './Categories.css';
-import {NoResultsTable, SimpleError} from '../Errors';
 
-class Categories extends React.Component {
+const Categories = ({
+  categories,
+  categoryErrors,
+  delCategoryRq,
+  getUserCategoriesRq,
+  history,
+  resetCategoriesError,
+  userToken,
+}) => {
+  useEffect(() => {
+    getUserCategoriesRq(userToken);
+  }, []);
 
-    componentDidMount() {
-        const {categoryErrors, fetchedCategories, fetchingCategories} = this.props;
-        if(!categoryErrors && !fetchingCategories && !fetchedCategories)
-            this.props.getUserCategoriesRq(this.props.userId);
-    }
-    
-    goAddCategory = () => {
-        this.props.history.push("/categories/add");
-    }
+  const goAddCategory = () => {
+    history.push('/categories/add');
+  };
 
-    
-    renderCategories = () => {
+  const renderCategoryErrors = () => {
+    if (categoryErrors && categoryErrors.length > 0)
+      return (
+        <SimpleError
+          callback={resetCategoriesError}
+          errors={categoryErrors}
+          timeout={5000}
+        />
+      );
+    return null;
+  };
 
-        const {categories, delCategoryRq} = this.props;
+  const renderCategoryList = () => {
+    if (!categories || categories.length < 1) return <NoResultsTable />;
+    return (
+      <ListCategories
+        categories={categories}
+        delCategoryRq={delCategoryRq}
+        userToken={userToken}
+      />
+    );
+  };
 
-        if(!categories || categories.length < 1) 
-            return (
-                <NoResultsTable />
-            );
-
-        return (
-            <ListCategories
-                categories={categories}
-                delCategoryRq={delCategoryRq} />
-        );
-    }
-
-    render(){
-
-        const {categoryErrors, resetCategoriesError} = this.props;
-
-        return (
-            <Card className="category-list-container">
-                <Card.Header>
-                    <Card.Title className="category-list-title">
-                        <h1>Categorias</h1>
-                    </Card.Title>
-                </Card.Header>
-                <Card.Body>
-                    <SimpleError
-                        callback={resetCategoriesError}
-                        errorObj={categoryErrors}
-                        timeout={5000} />
-                    {this.renderCategories()}
-                    <div className="add-category-button">
-                        <Button type="button" variant="primary" onClick={this.goAddCategory}>Agregar categoria</Button>
-                    </div>
-                </Card.Body>
-            </Card>
-        )
-    }
-}
+  return (
+    <div className="card category-list-container">
+      <div className="card-header">
+        <div className="card-title category-list-title">
+          <h1>Categorias</h1>
+        </div>
+      </div>
+      <div className="card-body">
+        {renderCategoryErrors()}
+        {renderCategoryList()}
+        <div className="add-category-button">
+          <button
+            type="button"
+            className="btn btn-primary"
+            onClick={goAddCategory}
+          >
+            Agregar categoria
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 Categories.propTypes = {
-    addCategoryRq: PropTypes.func.isRequired,
-    categories: PropTypes.array.isRequired,
-    categoryErrors: PropTypes.object,
-    delCategoryRq: PropTypes.func.isRequired,
-    fetchedCategories: PropTypes.bool.isRequired,
-    fetchingCategories: PropTypes.bool.isRequired,
-    getUserCategoriesRq: PropTypes.func.isRequired,
-    resetCategoriesError: PropTypes.func.isRequired,
-    userId: PropTypes.number.isRequired
-}
+  addCategoryRq: PropTypes.func.isRequired,
+  categories: PropTypes.array,
+  categoryErrors: PropTypes.array,
+  delCategoryRq: PropTypes.func.isRequired,
+  getUserCategoriesRq: PropTypes.func.isRequired,
+  resetCategoriesError: PropTypes.func.isRequired,
+  userToken: PropTypes.string.isRequired,
+};
 
-const mapStateToProps = state => ({
-    categories: state.category.categories,
-    categoryErrors: state.category.categoryErrors,
-    fetchedCategories: state.category.fetchedCategories,
-    fetchingCategories: state.category.fetchingCategories,
-    userId: state.sign.userId
+const mapDispatchToProps = {
+  addCategoryRq,
+  delCategoryRq,
+  getUserCategoriesRq,
+  resetCategoriesError,
+};
+
+const mapStateToProps = (state) => ({
+  categories: state.category.categories,
+  categoryErrors: state.category.categoryErrors,
+  userToken: state.sign.userData.token,
 });
 
-export default connect(mapStateToProps, {addCategoryRq, delCategoryRq, getUserCategoriesRq, resetCategoriesError})(Categories);
+export default connect(mapStateToProps, mapDispatchToProps)(Categories);
