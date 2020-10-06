@@ -28,7 +28,7 @@
     "tough-cookie": "^4.0.0"
   },
   "scripts": {
-    "start": "REACT_APP_API_URL=http://api.rodmontiel.com:8085 react-scripts start",
+    "start": "set PORT=80 && react-scripts start",
     "build": "REACT_APP_API_URL=https://api.rodmontiel.com/expensesControl react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

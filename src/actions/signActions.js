@@ -45,6 +45,7 @@ export const signInRq = (email, password) => {
   let options = {
     headers: {
       Authorization: 'Basic ' + base64.encode(email + ':' + password),
+      'Access-Control-Allow-Origin': '*',
     }
   };
 
@@ -67,6 +68,7 @@ export const signInRq = (email, password) => {
         }
       })
       .catch((error) => {
+        console.log(error);
         handleRequestError(error, dispatch, signError);
       })
       .finally(() => {
