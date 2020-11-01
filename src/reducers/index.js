@@ -5,6 +5,7 @@ import categoryReducer from './categoryReducer';
 import expensesReducer from './expensesReducer';
 import incomeReducer from './incomeReducer';
 import signReducer from './signReducer';
+import userReducer from './userReducer';
 
 export default (history) => combineReducers({
     app: appReducer,
@@ -12,5 +13,6 @@ export default (history) => combineReducers({
     expense: expensesReducer,
     income: incomeReducer,
     router: connectRouter(history),
-    sign: signReducer
+    sign: signReducer,
+    user: userReducer
 });

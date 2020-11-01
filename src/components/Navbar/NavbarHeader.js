@@ -22,28 +22,28 @@ const NavbarHeader = ({ userData }) => {
         fixed="top"
       >
         <Navbar.Brand href="/">
-          Control de gastos
+          Expenses control
         </Navbar.Brand>
         <Navbar.Toggle />
         <Navbar.Collapse id="basic-navbar">
           <Nav className="mr-auto">
             <Nav.Link href="/categories">
-              Categorias
+              Categories
             </Nav.Link>
             <Nav.Link href="/expenses">
-              Gastos
+              Expenses
             </Nav.Link>
             <Nav.Link href="/incomes">
-                Ingresos
+              Incomes
             </Nav.Link>
           </Nav>
           <NavDropdown title={userData.name} id="basic-nav-dropdown">
-            <NavDropdown.Item>
-              Mi cuenta
+            <NavDropdown.Item href="/my-account">
+              My account
             </NavDropdown.Item>
             <NavDropdown.Divider />
             <NavDropdown.Item onClick={logout}>
-              Cerrar sesi&oacute;n
+              Sign out
             </NavDropdown.Item>
           </NavDropdown>
         </Navbar.Collapse>

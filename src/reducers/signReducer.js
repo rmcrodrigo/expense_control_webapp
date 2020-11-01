@@ -1,5 +1,6 @@
 import {
     RESET_ERROR, RESET_SUCCESS_MESSAGE,
+    SET_USERDATA_FROM_OAUTH,
     SET_USERDATA_FROM_STORAGE,
     SIGN_ERROR,
     SIGNIN_RQ, SIGNIN_SUCCESS,
@@ -9,18 +10,14 @@ import {
 
 // initialState
 const initialState = {
-    signData: {
-        showLoginForm: true,
-        showNewUserForm: false
-    },
     signErrors: null,
     signUpMsg: null,
     userData: {}
 };
 
-export default function(state = initialState, action) {
+export default function (state = initialState, action) {
     let lState = null;
-    switch(action.type) {
+    switch (action.type) {
         case RESET_ERROR:
             lState = {
                 ...state,
@@ -34,9 +31,10 @@ export default function(state = initialState, action) {
             };
             break;
         case SET_USERDATA_FROM_STORAGE:
+        case SET_USERDATA_FROM_OAUTH:
             lState = {
                 ...state,
-                userData : action.payload
+                userData: action.payload
             };
             break;
         case SIGN_ERROR:
@@ -46,7 +44,7 @@ export default function(state = initialState, action) {
                 userData: null
             };
             break;
-        case SIGNIN_RQ: 
+        case SIGNIN_RQ:
             lState = {
                 ...state,
                 signErrors: null,
@@ -68,10 +66,6 @@ export default function(state = initialState, action) {
         case SIGNUP_SUCCESS:
             lState = {
                 ...state,
-                signData: {
-                    showLoginForm: true,
-                    showNewUserForm: false
-                },
                 signUpMsg: action.payload
             };
             break;

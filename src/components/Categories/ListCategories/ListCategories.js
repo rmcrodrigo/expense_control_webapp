@@ -5,13 +5,13 @@ import Category from '../Category/Category';
 const ListCategories = ({ categories, delCategoryRq, userToken }) => {
   return (
     <div className="table-responsive">
-      <table className="table table-striped table-bordered table-hover">
-        <thead className="thead-dark">
+      <table className="table table-sm table-bordered table-hover">
+        <thead className="thead-light">
           <tr>
-            <th>Nombre</th>
-            <th>Descripci&oacute;n</th>
-            <th>Tipo</th>
-            <th>Acci&oacute;n</th>
+            <th>Name</th>
+            <th>Description</th>
+            <th>Type</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>

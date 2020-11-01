@@ -1,30 +1,31 @@
 export const handleRequestError = (objToCheck, dispatch, callbackFn) => {
   // catch way logic
-  if (
-    objToCheck.response &&
-    objToCheck.response.data &&
-    (objToCheck.response.data.error || objToCheck.response.data.errors)
-  ) {
-    const errors = objToCheck.response.data.error
-      ? [objToCheck.response.data.error]
-      : objToCheck.response.data.errors;
-    callbackFn(errors, dispatch);
+
+  if (objToCheck.hasOwnProperty("response")) {
+    // objToCheck it's an error
+
+    if (!objToCheck.response) {
+      if (!objToCheck.status) {
+        dispatch(callbackFn(["We couldn't connect to the server"]));
+        return false;
+      }
+    }
+
+    dispatch(callbackFn(['Something wrong happened']));
     return false;
-  } else if (
-    objToCheck.data &&
-    !objToCheck.data.success &&
-    (objToCheck.data.error || objToCheck.data.errors)
-  ) {
-    const errors = objToCheck.data.error
-      ? [objToCheck.data.error]
-      : objToCheck.data.errors;
-    callbackFn(errors, dispatch);
-    return false;
-  } else if (objToCheck.message) {
-    callbackFn(['Something wrong happened'], dispatch);
-    return false;
-  } else if(!objToCheck.status && !objToCheck.response) {
-    callbackFn(["We couldn't connect to the server"], dispatch);
+
   }
+  // objToCheck its a response object
+  if (!objToCheck.hasOwnProperty("data")) {
+    dispatch(callbackFn(['Something wrong happened']));
+    return false;
+  } else {
+    if (!objToCheck.data.success && objToCheck.data.error) {
+      dispatch(callbackFn([objToCheck.data.error]));
+      return false
+    }
+  }
+
   return true;
+
 };

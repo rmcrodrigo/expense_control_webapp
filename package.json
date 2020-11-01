@@ -28,18 +28,24 @@
     "tough-cookie": "^4.0.0"
   },
   "scripts": {
-    "start": "set PORT=80 && react-scripts start",
+    "start": "react-scripts start",
     "build": "REACT_APP_API_URL=https://api.rodmontiel.com/expensesControl react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
   "eslintConfig": {
-    "extends": "react-app"
+    "extends": [
+      "react-app",
+      "react-hooks"
+    ]
   },
   "browserslist": [
     ">0.2%",
     "not dead",
     "not ie <= 11",
     "not op_mini all"
-  ]
+  ],
+  "devDependencies": {
+    "eslint-plugin-react-hooks": "^4.2.0"
+  }
 }

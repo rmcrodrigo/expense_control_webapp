@@ -100,7 +100,7 @@ const Expenses = ({
 
     localStorage.setItem("datesFormData", JSON.stringify(_tempData));
 
-    if(expenseId)
+    if (expenseId)
       history.push(`/expenses/edit/${expenseId}`);
     else
       history.push('/expenses/add');
@@ -141,13 +141,11 @@ const Expenses = ({
 
   return (
     <div className="card card-container">
-      <React.Fragment>
-        <div className="card-header">
-          <div className="card-title">
-            <h1>Lista de gastos</h1>
-          </div>
+      <div className="card-body">
+        <div style={{ borderBottom: 'solid 1px lightgray', paddingBottom: 10 }}>
+          <h1 className="h3 text-center">Expenses List</h1>
         </div>
-        <div className="card-body">
+        <div className="pt-2">
           {renderExpenseErrors()}
           <DatesContainer
             searchAction={searchExpenses}
@@ -163,7 +161,7 @@ const Expenses = ({
             Agregar gasto
           </button>
         </div>
-      </React.Fragment>
+      </div>
     </div>
   );
 };

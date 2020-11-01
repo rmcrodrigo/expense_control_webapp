@@ -1,17 +1,45 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+import { Link, useHistory } from 'react-router-dom';
 import PropTypes from 'prop-types';
+
 import SuccessMsg from '../../Util/SuccessMsg';
 import { SimpleError } from '../../Errors';
+
+import {
+  resetError,
+  resetSuccessMsg,
+  signInRq
+} from '../../../actions/signActions';
+import { setSpinnerVisibility } from '../../../actions/appActions';
 
 function LoginForm({
   resetError,
   resetSuccessMsg,
-  showLoginForm,
+  setSpinnerVisibility,
   signErrors,
   signInRq,
   signUpMsg,
-  switchForms,
+  userData,
 }) {
+
+  const history = useHistory();
+
+  useEffect(function() {
+    setSpinnerVisibility(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (userData && userData.token) {
+      const myDate = new Date();
+      myDate.setTime(myDate.getTime() + 2 * 60 * 60 * 1000);
+      localStorage.setItem('userData', JSON.stringify(userData));
+      history.push('/');
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userData]);
+
   const [email, setEmail] = useState('');
   const [emailError, setEmailError] = useState(false);
   const [password, setPassword] = useState('');
@@ -78,20 +106,12 @@ function LoginForm({
     return null;
   };
 
-  const showNewUserForm = (e) => {
-    e.preventDefault();
-    switchForms('NewUser');
-  };
-
   return (
-    <React.Fragment>
+    <div className="col m-4">
       <form
         autoComplete="off"
-        className={`login100-form validate-form ${
-          showLoginForm ? '' : 'hidden'
-        }`}
+        className='login100-form validate-form'
         onSubmit={login}
-        style={{ paddingTop: '25%' }}
       >
         <p className="h2 text-center" style={{ marginBottom: 30 }}>
           Member Login
@@ -146,24 +166,46 @@ function LoginForm({
         </div>
 
         <div className="text-center">
-          <button className="btn btn-link" type="button" onClick={showNewUserForm}>
+          <Link className="btn btn-link" to="/signup">
             Create your Account
-          </button>
+          </Link>
+        </div>
+
+        <hr />
+        <div className="text-center" style={{ padding: 0, margin: "-28px 0 10px 0" }}>
+          <span style={{ backgroundColor: "white", padding: "0 10px 0 10px", width: "fit-content" }}>Or login with</span>
+        </div>
+
+        <div className="text-center">
+          <a className="btn btn-lg btn-outline-dark" href="https://github.com/login/oauth/authorize?client_id=63b665c5a28378d7c372&scope=user:email">
+            Github
+            <i className="align-middle fab fa-github fa-2x" style={{ paddingLeft: 10 }}></i>
+          </a>
         </div>
       </form>
-    </React.Fragment>
+    </div>
   );
 }
 
 LoginForm.propTypes = {
   resetError: PropTypes.func.isRequired,
   resetSuccessMsg: PropTypes.func.isRequired,
-  showLoginForm: PropTypes.bool.isRequired,
+  setSpinnerVisibility: PropTypes.func.isRequired,
   signErrors: PropTypes.array,
   signInRq: PropTypes.func.isRequired,
   signUpMsg: PropTypes.string,
-  switchForms: PropTypes.func.isRequired,
   userData: PropTypes.object,
 };
 
-export default LoginForm;
+const mapStateToProps = (state) => ({
+  signErrors: state.sign.signErrors,
+  signUpMsg: state.sign.signUpMsg,
+  userData: state.sign.userData,
+});
+
+export default connect(mapStateToProps, {
+  resetError,
+  resetSuccessMsg,
+  setSpinnerVisibility,
+  signInRq
+})(LoginForm);

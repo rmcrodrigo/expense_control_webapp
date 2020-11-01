@@ -124,12 +124,10 @@ export const editExpenseRq = (expense, history, userToken) => {
   };
 };
 
-const expensesError = (error, dispatch) => {
-  dispatch({
-    type: EXPENSES_ERROR,
-    payload: error,
-  });
-};
+const expensesError = error => ({
+  type: EXPENSES_ERROR,
+  payload: error,
+});
 
 export const getAllExpensesRq = (userToken, from, to) => {
   const config = {

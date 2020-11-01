@@ -182,12 +182,10 @@ export const getUserIncomesRq = (userToken, from, to) => {
   };
 };
 
-const incomeError = (error, dispatch) => {
-  dispatch({
-    type: INCOME_ERROR,
-    payload: error,
-  });
-};
+const incomeError = error => ({
+  type: INCOME_ERROR,
+  payload: error
+});
 
 const incomeSuccess = (dispatch, type, data) => {
   dispatch({

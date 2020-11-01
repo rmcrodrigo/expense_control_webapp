@@ -2,8 +2,8 @@ import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
 
-const LoadingSpinner = ({ userData, visible = true }) => {
-  if (!userData || !userData.token) return null;
+const LoadingSpinner = ({ history, userData, visible = true }) => {
+  // if ( (history && history.location && history.location.pathname.indexOf('/sign/oauth') < 0) && (!userData || !userData.token)) return null;
   const topPosition = window.innerHeight / 2 - 40;
   return (
     <div

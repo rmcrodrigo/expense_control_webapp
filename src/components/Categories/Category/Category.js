@@ -9,7 +9,7 @@ const Category = ({ category, delCategoryRq, userToken }) => {
   };
 
   const delCategory = (id) => {
-    if (window.confirm('Estas seguro de que deseas eliminar este registro?'))
+    if (window.confirm('Are you sure you want to delete this item?'))
       delCategoryRq(id, userToken);
   };
 
@@ -32,14 +32,14 @@ const Category = ({ category, delCategoryRq, userToken }) => {
             delCategory(category.id);
           }}
         >
-          Eliminar
+          Delete
         </button>
         <Link
           style={{ marginLeft: 5 }}
           to={`/categories/edit/${category.id}`}
           className="btn btn-sm btn-dark"
         >
-          Editar
+          Edit
         </Link>
       </td>
     </tr>

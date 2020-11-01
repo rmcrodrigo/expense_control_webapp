@@ -8,6 +8,10 @@
 
 /*//////////////////////////////////////////////////////////////////*/
 
+.main-container {
+  padding-top: 48px;
+}
+
 #login-container {
   background: white;
   border-radius: 1em;
@@ -18,11 +22,10 @@
   padding-left: 0px;
   padding-right: 0px;
   position: relative;
-  top: 5%;
   width: 70%;
   border: 0px;
   margin: 0px;
-  min-height: 570px;
+  min-height: 536px;
 }
 
 #login-box {
@@ -30,9 +33,21 @@
   border: 0px;
   margin: 0px;
 }
-
+/*
 .login-data {
   padding-top: 5%;
+}
+*/
+
+#login-container .react-datepicker-wrapper {
+  position: relative;
+  flex: 1 1 auto;
+  width: 1%;
+  margin-bottom: 0;
+}
+
+#login-container .form-row {
+  flex-wrap: nowrap;
 }
 
 /*------------------------------------------------------------------ */

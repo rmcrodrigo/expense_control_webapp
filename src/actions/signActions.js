@@ -1,19 +1,82 @@
 import {
   RESET_ERROR,
   RESET_SUCCESS_MESSAGE,
+  SET_SPINNER_VISIBILITY,
+  SET_USERDATA_FROM_OAUTH,
+  SET_USERDATA_FROM_STORAGE,
+  SIGN_ERROR,
   SIGNIN_RQ,
   SIGNIN_SUCCESS,
-  SIGN_ERROR,
-  SWITCH_FORMS,
-  SET_SPINNER_VISIBILITY,
-  SET_USERDATA_FROM_STORAGE,
-  SIGNUP_RQ,
-  SIGNUP_SUCCESS
+  SIGNUP_RQ
+  // SIGNUP_SUCCESS
 } from './types';
 import axios from '../utilities/axiosConfig';
 import base64 from 'base-64';
 
-import {handleRequestError} from '../utilities/util';
+import { handleRequestError } from '../utilities/util';
+
+export const confirmAccount = (token) => {
+  return dispatch => {
+    dispatch({
+      type: SET_SPINNER_VISIBILITY,
+      payload: true
+    });
+    axios.get('/confirm-account/' + token)
+      .then(function (response) {
+        handleRequestError(response, dispatch, signError);
+      }).catch(function (error) {
+        handleRequestError(error, dispatch, signError);
+      }).finally(function () {
+        dispatch({
+          type: SET_SPINNER_VISIBILITY,
+          payload: false,
+        });
+      });
+  }
+}
+
+export const githubSign = (code, history) => {
+
+  return (dispatch) => {
+    dispatch({
+      type: SET_SPINNER_VISIBILITY,
+      payload: true,
+    });
+
+    axios.get("/signin/oauth/github/" + code)
+      .then(function (response) {
+        if (handleRequestError(response, dispatch, signError)) {
+          if (response.data.code === 211) {
+            dispatch(setUserDataFromOAuth({
+              code: response.data.code,
+              birthday: response.data.birthday,
+              email: response.data.email,
+              name: response.data.name
+            }));
+          } else {
+            dispatch({
+              type: SIGNIN_SUCCESS,
+              payload: {
+                email: response.data.email,
+                name: response.data.name,
+                token: response.data.token
+              },
+            });
+            history.push("/signin");
+          }
+        } else {
+          history.push("/signin");
+        }
+      }).catch(function (error) {
+        handleRequestError(error, dispatch, signError);
+      }).finally(function () {
+        dispatch({
+          type: SET_SPINNER_VISIBILITY,
+          payload: false,
+        });
+      });
+  }
+}
 
 export const resetError = () => {
   return {
@@ -34,12 +97,17 @@ export const setUserDataFromStorage = (userData) => {
   };
 };
 
-const signError = (error, dispatch) => {
-  dispatch({
-    type: SIGN_ERROR,
-    payload: error,
-  });
-};
+export const setUserDataFromOAuth = (userData) => {
+  return {
+    type: SET_USERDATA_FROM_OAUTH,
+    payload: userData
+  };
+}
+
+const signError = error => ({
+  type: SIGN_ERROR,
+  payload: error,
+});
 
 export const signInRq = (email, password) => {
   let options = {
@@ -68,7 +136,6 @@ export const signInRq = (email, password) => {
         }
       })
       .catch((error) => {
-        console.log(error);
         handleRequestError(error, dispatch, signError);
       })
       .finally(() => {
@@ -80,7 +147,7 @@ export const signInRq = (email, password) => {
   };
 };
 
-export const signUpRq = (user) => {
+export const signUpRq = (user, history) => {
   return (dispatch) => {
     dispatch({
       type: SET_SPINNER_VISIBILITY,
@@ -91,10 +158,11 @@ export const signUpRq = (user) => {
       .post('/signup', user)
       .then((response) => {
         if (handleRequestError(response, dispatch, signError)) {
-          dispatch({
+          /* dispatch({
             type: SIGNUP_SUCCESS,
             payload: 'You have registered successfully',
-          });
+          }); */
+          history.push("/success-signin");
         }
       })
       .catch((error) => {
@@ -106,19 +174,5 @@ export const signUpRq = (user) => {
           payload: false,
         });
       });
-  };
-};
-
-export const switchForms = (activeForm) => {
-  const signData = {
-    showLoginForm: false,
-    showNewUserForm: false,
-  };
-
-  signData['show' + activeForm + 'Form'] = true;
-
-  return {
-    type: SWITCH_FORMS,
-    payload: signData,
   };
 };

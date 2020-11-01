@@ -88,7 +88,7 @@ const Dashboard = ({
   };
 
   if (categoryErrors)
-    return <div className="alert alert-danger">{categoryErrors}</div>;
+    return <div className="alert alert-danger" style={{marginTop: 40}}>{categoryErrors}</div>;
 
   if (!categories || categories.length < 1) return <NoCategoriesMsg />;
 

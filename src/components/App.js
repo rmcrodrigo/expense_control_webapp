@@ -14,7 +14,7 @@ function App({ history }) {
       <div className="main-container">
         <Routes />
       </div>
-      <LoadingSpinner />
+      <LoadingSpinner history={history} />
     </ConnectedRouter>
   );
 }

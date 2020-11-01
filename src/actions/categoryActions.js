@@ -61,12 +61,10 @@ export const addCategoryRq = (category, history, userToken) => {
   };
 };
 
-const categoryError = (error, dispatch) => {
-  dispatch({
-    type: CATEGORIES_ERROR,
-    payload: error,
-  });
-};
+const categoryError = error => ({
+  type: CATEGORIES_ERROR,
+  payload: error,
+});
 
 export const delCategoryRq = (id, userToken) => {
   const options = {

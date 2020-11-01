@@ -1,16 +1,42 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
+import { Link, useHistory } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import PropTypes from 'prop-types';
+
 import DatePicker from 'react-datepicker';
+
 import { SimpleError } from '../../Errors';
 
-const NewUserForm = ({
+import {
+  githubSign,
   resetError,
-  showNewUserForm,
+  signUpRq
+} from '../../../actions/signActions';
+import { setSpinnerVisibility } from '../../../actions/appActions';
+
+function useQuery() {
+  return new URLSearchParams(useLocation().search);
+}
+
+const NewUserForm = ({
+  githubSign,
+  resetError,
+  setSpinnerVisibility,
   signErrors,
   signUpRq,
-  switchForms,
+  userData
 }) => {
-  const [birthday, setBirthday] = useState(new Date());
+
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = today.getMonth();
+  const day = today.getDate();
+  const maxDate = new Date(year - 18, month, day);
+  const minDate = new Date(year - 150, month, day);
+  const history = useHistory();
+
+  const [birthday, setBirthday] = useState(maxDate);
   const [birthdayError, setBirthdayError] = useState(false);
   const [cPwd, setCPwd] = useState('');
   const [cPwdError, setCPwdError] = useState(false);
@@ -44,10 +70,31 @@ const NewUserForm = ({
     '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})'
   );
 
+  const queryFinder = useQuery();
+
+  useEffect(() => {
+    const code = queryFinder.get("code");
+    if (!code)
+      setSpinnerVisibility(false);
+    else {
+      githubSign(code, history);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  useEffect(() => {
+    if (userData) {
+      const { birthday, email, name } = userData;
+      if (birthday) setBirthday(birthday);
+      if (email) setEmail(email);
+      if (name) setName(name);
+    }
+  }, [userData]);
+
   const createUser = (e) => {
     e.preventDefault();
 
-    const { lEmail } = e.target;
+    const { email } = e.target;
 
     let lBirthdayError = false,
       lCPwdError = false,
@@ -56,9 +103,11 @@ const NewUserForm = ({
       lLastnameError = false,
       lPwdError = false;
 
-    if (!birthday.getTime()) lBirthdayError = true;
+    const lBirthday = new Date(birthday);
+
+    if (!lBirthday.getTime()) lBirthdayError = true;
     if (!validateCPassword(cPwd)) lCPwdError = true;
-    if (!validateEmail(lEmail)) lEmailError = true;
+    if (!validateEmail(email)) lEmailError = true;
     if (!name) lNameError = true;
     if (!lastname) lLastnameError = true;
     if (!validatePassword(pwd)) lPwdError = true;
@@ -81,15 +130,15 @@ const NewUserForm = ({
       return false;
 
     const user = {
-      birthday,
-      email: email,
+      birthday: lBirthday.getTime(),
+      email: email.value,
       genre,
       name,
       lastname,
       password: pwd,
     };
 
-    signUpRq(user);
+    signUpRq(user, history);
   };
 
   const handleChangeInput = (e) => {
@@ -120,15 +169,13 @@ const NewUserForm = ({
 
     if (!value) {
       stateSetters[name](value);
-      stateSetters[name + 'Error'](true);
+      if (stateSetters[name + 'Error'])
+        stateSetters[name + 'Error'](true);
     } else {
       stateSetters[name](value);
-      stateSetters[name + 'Error'](false);
+      if (stateSetters[name + 'Error'])
+        stateSetters[name + 'Error'](false);
     }
-  };
-
-  const handleChangeDate = (date) => {
-    setBirthday(date);
   };
 
   const handleChangePwd = (e) => {
@@ -161,13 +208,8 @@ const NewUserForm = ({
     return null;
   };
 
-  const showLoginForm = () => {
-    switchForms('Login');
-  };
-
   const validateEmail = (input) => {
     if (!input.value || !input.validity.valid) return false;
-
     return true;
   };
 
@@ -185,185 +227,200 @@ const NewUserForm = ({
   if (pwd.length > 0 && cPwdError) showCPwdError = true;
 
   return (
-    <form
-      autoComplete="off"
-      className={`login100-form validate-form ${
-        showNewUserForm ? '' : 'hidden'
-      }`}
-      onSubmit={createUser}
-    >
-      <p className="h2 text-center" style={{ paddingBottom: 20 }}>
-        Registro de nuevo usuario
-      </p>
-      {renderErrors()}
-      <div className="form-group input-group">
-        <div className="input-group-prepend">
-          <span className="input-group-text">
-            <i className="fa fa-user" />
-          </span>
+    <div className="col m-4">
+      <form
+        autoComplete="off"
+        className='login100-form validate-form'
+        onSubmit={createUser}
+      >
+        <p className="h2 text-center" style={{ paddingBottom: 20 }}>
+          Sign up
+        </p>
+        {renderErrors()}
+        <div className="form-group input-group">
+          <div className="input-group-prepend">
+            <span className="input-group-text">
+              <i className="fa fa-user" />
+            </span>
+          </div>
+          <input
+            className={'form-control ' + (nameError ? ' input-error' : '')}
+            name="name"
+            onChange={handleChangeInput}
+            placeholder="Name"
+            type="text"
+            value={name}
+          />
         </div>
-        <input
-          className={'form-control ' + (nameError ? ' input-error' : '')}
-          name="name"
-          onChange={handleChangeInput}
-          placeholder="Nombre"
-          type="text"
-        />
-      </div>
 
-      <div className="form-group input-group">
-        <div className="input-group-prepend">
-          <span className="input-group-text">
-            <i className="fa fa-user" />
-          </span>
+        <div className="form-group input-group">
+          <div className="input-group-prepend">
+            <span className="input-group-text">
+              <i className="fa fa-user" />
+            </span>
+          </div>
+          <input
+            className={'form-control ' + (lastnameError ? ' input-error' : '')}
+            name="lastname"
+            onChange={handleChangeInput}
+            placeholder="Lastname"
+            type="text"
+          />
         </div>
-        <input
-          className={'form-control ' + (lastnameError ? ' input-error' : '')}
-          name="lastname"
-          onChange={handleChangeInput}
-          placeholder="Apellidos"
-          type="text"
-        />
-      </div>
 
-      <div className="form-group input-group">
-        <div className="input-group-prepend">
-          <span className="input-group-text">
-            <i className="fa fa-calendar" />
-          </span>
+        <div className="form-row">
+
+          <div className="col-7 col-sm-7 col-md-7 form-group input-group">
+            <div className="input-group-prepend">
+              <span className="input-group-text">
+                <i className="fa fa-calendar" />
+              </span>
+            </div>
+            <DatePicker
+              className={'form-control' + (birthdayError ? ' input-error' : '')}
+              dateFormat="dd/MM/yyyy"
+              maxDate={maxDate}
+              minDate={minDate}
+              name="birthday"
+              onChange={date => setBirthday(date)}
+              placeholder="dd/mm/yyy"
+              selected={birthday}
+              showYearDropdown
+            />
+
+          </div>
+
+          <div className="col-5 col-sm-5 col-md-5 form-group form-check form-check-inline">
+            <i
+              className="fa fa-venus-mars"
+              style={{ paddingLeft: 5, paddingRight: 10 }}
+            />
+            <input
+              checked={genre === 'M'}
+              className="form-check-input"
+              name="genre"
+              onChange={handleChangeInput}
+              type="radio"
+              value="M"
+            />
+            <label
+              className="radio-inline form-check-label"
+              style={{ paddingRight: 10, paddingTop: 3 }}
+            >
+              M
+            </label>
+            <input
+              checked={genre === 'F'}
+              className="form-check-input"
+              name="genre"
+              onChange={handleChangeInput}
+              type="radio"
+              value="F"
+            />
+            <label
+              className="radio-inline form-check-label"
+              style={{ paddingTop: 3 }}
+            >
+              F
+            </label>
+          </div>
+
         </div>
-        <DatePicker
-          className={'form-control' + (birthdayError ? ' input-error' : '')}
-          dateFormat="dd/MM/yyyy"
-          name="birthday"
-          onChange={handleChangeDate}
-          placeholder="dd/mm/yyy"
-          selected={birthday}
-          showYearDropdown
-        />
-      </div>
 
-      <div className="form-group form-check form-check-inline">
-        <i
-          className="fa fa-venus-mars"
-          style={{ paddingLeft: 36, paddingRight: 10 }}
-        />
-        <input
-          checked={genre === 'M'}
-          className="form-check-input"
-          name="genre"
-          onChange={handleChangeInput}
-          type="radio"
-          value="M"
-        />
-        <label
-          className="radio-inline form-check-label"
-          style={{ paddingRight: 10, paddingTop: 3 }}
-        >
-          M
-        </label>
-        <input
-          checked={genre === 'F'}
-          className="form-check-input"
-          name="genre"
-          onChange={handleChangeInput}
-          type="radio"
-          value="F"
-        />
-        <label
-          className="radio-inline form-check-label"
-          style={{ paddingTop: 3 }}
-        >
-          F
-        </label>
-      </div>
-
-      <div className="form-group input-group">
-        <div className="input-group-prepend">
-          <span className="input-group-text">
-            <i className="fa fa-envelope" aria-hidden="true" />
-          </span>
-        </div>
-        <input
-          className={'form-control ' + (emailError ? ' input-error' : '')}
-          name="email"
-          onChange={handleChangeInput}
-          placeholder="Correo electronico"
-          type="email"
-        />
-        <div className="input-group" style={{ margin: '5px 0 0 45px' }}>
-          <p className={!emailError ? ' hidden' : ''} style={{ color: 'red' }}>
-            Correo invalido
+        <div className="form-group input-group">
+          <div className="input-group-prepend">
+            <span className="input-group-text">
+              <i className="fa fa-envelope" aria-hidden="true" />
+            </span>
+          </div>
+          <input
+            className={'form-control ' + (emailError ? ' input-error' : '')}
+            name="email"
+            onChange={handleChangeInput}
+            placeholder="Email"
+            type="email"
+            value={email}
+          />
+          <div className="input-group" style={{ margin: '5px 0 0 45px' }}>
+            <p className={!emailError ? ' hidden' : ''} style={{ color: 'red' }}>
+              Invalid email
           </p>
+          </div>
         </div>
-      </div>
 
-      <div className="form-group input-group">
-        <div className="input-group-prepend">
-          <span className="input-group-text">
-            <i className="fa fa-lock" />
-          </span>
-        </div>
-        <input
-          className={'form-control ' + (pwdError ? ' input-error' : '')}
-          name="pwd"
-          onChange={handleChangeInput}
-          placeholder="Contrasena"
-          type="password"
-        />
-        <div className="input-group" style={{ margin: '5px 0 0 45px' }}>
-          <p className={!pwdError ? ' hidden' : ''} style={{ color: 'red' }}>
-            Contrase&ntilde;a insegura
+        <div className="form-group input-group">
+          <div className="input-group-prepend">
+            <span className="input-group-text">
+              <i className="fa fa-lock" />
+            </span>
+          </div>
+          <input
+            className={'form-control ' + (pwdError ? ' input-error' : '')}
+            name="pwd"
+            onChange={handleChangeInput}
+            placeholder="Password"
+            type="password"
+          />
+          <div className="input-group" style={{ margin: '5px 0 0 45px' }}>
+            <p className={!pwdError ? ' hidden' : ''} style={{ color: 'red' }}>
+              Insecure password
           </p>
+          </div>
         </div>
-      </div>
 
-      <div className="form-group input-group">
-        <div className="input-group-prepend">
-          <span className="input-group-text">
-            <i className="fa fa-lock" />
-          </span>
-        </div>
-        <input
-          className={'form-control ' + (showCPwdError ? ' input-error' : '')}
-          name="cPwd"
-          onChange={handleChangeInput}
-          placeholder="Repite la contrasena"
-          type="password"
-        />
-        <div className="input-group" style={{ margin: '5px 0 0 45px' }}>
-          <p className={showCPwdError ? '' : 'hidden'} style={{ color: 'red' }}>
-            Las contrase&ntilde;as no coinciden
+        <div className="form-group input-group">
+          <div className="input-group-prepend">
+            <span className="input-group-text">
+              <i className="fa fa-lock" />
+            </span>
+          </div>
+          <input
+            className={'form-control ' + (showCPwdError ? ' input-error' : '')}
+            name="cPwd"
+            onChange={handleChangeInput}
+            placeholder="Confirm password"
+            type="password"
+          />
+          <div className="input-group" style={{ margin: '5px 0 0 45px' }}>
+            <p className={showCPwdError ? '' : 'hidden'} style={{ color: 'red' }}>
+              Passwords do not match
           </p>
+          </div>
         </div>
-      </div>
 
-      <div style={{ paddingTop: 13, paddingLeft: 7 }} className="row mx-auto">
-        <div className="col-6 col-sm-6 col-md-6 col-lg-6">
-          <button
-            className="btn btn-md btn-secondary"
-            onClick={showLoginForm}
-            type="button"
-          >
-            Regresar
+        <div style={{ paddingTop: 13, paddingLeft: 7 }} className="row mx-auto">
+          <div className="col-6 col-sm-6 col-md-6 col-lg-6">
+            <Link
+              className="btn btn-md btn-secondary"
+              to="/signin"
+            >
+              Return
+          </Link>
+          </div>
+          <div className="col-6 col-sm-6 col-md-6 col-lg-6">
+            <button className=" btn btn-md btn-primary" type="submit">
+              Sign up
           </button>
+          </div>
         </div>
-        <div className="col-6 col-sm-6 col-md-6 col-lg-6">
-          <button className=" btn btn-md btn-primary" type="submit">
-            Registrar
-          </button>
-        </div>
-      </div>
-    </form>
+      </form>
+    </div>
   );
+    
 };
 
 NewUserForm.propTypes = {
+  githubSign: PropTypes.func.isRequired,
   resetError: PropTypes.func.isRequired,
-  showNewUserForm: PropTypes.bool.isRequired,
+  setSpinnerVisibility: PropTypes.func.isRequired,
   signErrors: PropTypes.array,
   signUpRq: PropTypes.func.isRequired,
-  switchForms: PropTypes.func.isRequired,
+  userData: PropTypes.object
 };
 
-export default NewUserForm;
+const mapStateToProps = (state) => ({
+  signErrors: state.sign.signErrors,
+  userData: state.sign.userData
+});
+
+export default connect(mapStateToProps, { githubSign, resetError, setSpinnerVisibility, signUpRq })(NewUserForm);

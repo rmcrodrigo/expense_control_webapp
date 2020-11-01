@@ -14,13 +14,13 @@ const Expense = ({
     return (
       <tr className="data-info">
         <td colSpan="5" className="alert alert-danger">
-          No se encuentra la categoria asociada al ingreso
+          Category linked to category not found
         </td>
       </tr>
     );
 
   const delExpense = (id) => {
-    if (window.confirm('Estas seguro que deseas borrar este elemento?'))
+    if (window.confirm('Are you sure you want to delete this item?'))
       delExpenseRq(id, userToken);
   };
 
@@ -50,7 +50,7 @@ const Expense = ({
           onClick={() => delExpense(expense.id)}
           type="button"
         >
-          Eliminar
+          Delete
         </button>
         <button
           className="btn btn-sm btn-dark"
@@ -58,7 +58,7 @@ const Expense = ({
           style={{ marginLeft: 5 }}
           type="button"
         >
-          Editar
+          Edit
         </button>
       </td>
     </tr>

@@ -57,22 +57,22 @@ const Categories = ({
 
   return (
     <div className="card category-list-container">
-      <div className="card-header">
-        <div className="card-title category-list-title">
-          <h1>Categorias</h1>
-        </div>
-      </div>
       <div className="card-body">
-        {renderCategoryErrors()}
-        {renderCategoryList()}
-        <div className="add-category-button">
-          <button
-            type="button"
-            className="btn btn-primary"
-            onClick={goAddCategory}
-          >
-            Agregar categoria
+        <div style={{ borderBottom: 'solid 1px lightgray', paddingBottom: 10 }}>
+          <h1 className='h3 text-center'>Categories</h1>
+        </div>
+        <div className="pt-2">
+          {renderCategoryErrors()}
+          {renderCategoryList()}
+          <div className="add-category-button">
+            <button
+              type="button"
+              className="btn btn-primary"
+              onClick={goAddCategory}
+            >
+              Add category
           </button>
+          </div>
         </div>
       </div>
     </div>

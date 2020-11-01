@@ -12,14 +12,14 @@ const ExpenseList = ({ categories, delExpenseRq, expenses, goExpenseForm, userTo
 
   return (
     <React.Fragment>
-      <table className="table table-bordered table-hover table-striped">
-        <thead className="thead-dark">
+      <table className="table table-sm table-bordered table-hover">
+        <thead className="thead-light">
           <tr>
-            <th>Fecha</th>
-            <th>Descripcion</th>
-            <th>Categoria</th>
-            <th>Monto</th>
-            <th>Accion</th>
+            <th>Date</th>
+            <th>Description</th>
+            <th>Category</th>
+            <th>Amount</th>
+            <th>Action</th>
           </tr>
         </thead>
         <tbody>

@@ -19,12 +19,12 @@ const DatesContainer = ({ searchAction, userToken }) => {
     {
       disabled: false,
       id: 'month',
-      title: 'Mes'
+      title: 'Month'
     },
     {
       disabled: false,
       id: 'range',
-      title: 'Rango de fechas'
+      title: 'Date range'
     }
   ]
 
@@ -78,7 +78,7 @@ const DatesContainer = ({ searchAction, userToken }) => {
 
   return (
     <div className="tabs-container">
-      <label>Filtrar movimientos por:</label>
+      <label>Filter movements by:</label>
       <Tabs tabs={tabs} value={mode} onChange={handleTabChange} />
       <div className="all-tab-content">
         <TabPanel className="month-inputs-container" id="month" value={mode}>
@@ -97,7 +97,7 @@ const DatesContainer = ({ searchAction, userToken }) => {
               type="button"
               value="month"
             >
-              Buscar
+              Search
             </button>
           </>
         </TabPanel>
