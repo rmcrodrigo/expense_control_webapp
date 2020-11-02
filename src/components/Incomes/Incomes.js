@@ -134,23 +134,23 @@ const Incomes = ({
 
   return (
     <div className="card card-container">
-      <div className="card-header">
-        <div className="card-title">
-          <h1>Lista de ingresos</h1>
-        </div>
-      </div>
       <div className="card-body">
-        {renderErrors()}
-        <DatesContainer searchAction={searchIncome} userToken={userToken} />
-        {renderIncomeList()}
-        <div className="add-category-button">
-          <button
-            className="btn btn-primary"
-            type="button"
-            onClick={goIncomeForm}
-          >
-            Agregar ingreso
+        <div style={{ borderBottom: 'solid 1px lightgray' }}>
+          <h1 className="h3 font-weight-bold text-center">Income List</h1>
+        </div>
+        <div className="pt-3">
+          {renderErrors()}
+          <DatesContainer searchAction={searchIncome} userToken={userToken} />
+          {renderIncomeList()}
+          <div className="add-category-button">
+            <button
+              className="btn btn-success"
+              type="button"
+              onClick={goIncomeForm}
+            >
+              Agregar ingreso
           </button>
+          </div>
         </div>
       </div>
     </div>

@@ -170,7 +170,7 @@ const ExpenseForm = ({
   };
 
   return (
-    <form autoComplete="off" onSubmit={sendAction}>
+    <form autoComplete="off" className="pt-3" onSubmit={sendAction}>
       {renderErrors()}
       <div className="form-group">
         <label>Categoria</label>

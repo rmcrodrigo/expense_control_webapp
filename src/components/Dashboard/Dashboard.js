@@ -88,7 +88,7 @@ const Dashboard = ({
   };
 
   if (categoryErrors)
-    return <div className="alert alert-danger" style={{marginTop: 40}}>{categoryErrors}</div>;
+    return <div className="alert alert-danger" style={{ marginTop: 40 }}>{categoryErrors}</div>;
 
   if (!categories || categories.length < 1) return <NoCategoriesMsg />;
 
@@ -198,12 +198,12 @@ const Dashboard = ({
   };
 
   return (
-    <React.Fragment>
-      <div className="card dashboard-container card-container">
-        <div className="card-header">
-          <h1 className="text-center">Estadisticas</h1>
+    <div className="card card-container">
+      <div className="card-body">
+        <div style={{ borderBottom: 'solid 1px lightgray', paddingBottom: 10 }}>
+          <h1 className='h3 font-weight-bold text-center'>Statistics</h1>
         </div>
-        <div className="card-body">
+        <div className="pt-2">
           <div className="row">
             <div className="col-sm-12 col-12">
               <DatesContainer
@@ -217,54 +217,54 @@ const Dashboard = ({
               No hay informacion para mostrar
             </div>
           ) : (
-            <>
-              <div
-                id="balance-chart"
-                className="row mb-5"
-                style={{ margin: '0 0 30px 0', minHeight: 400, width: '100%' }}
-              >
-                <div className="col-sm-12 col-12">
-                  <div className="row" width="100%">
-                    <div className="col-sm-12 col-12">
-                      <p className="h2 text-center">Balance mensual</p>
+              <>
+                <div
+                  id="balance-chart"
+                  className="row mb-5"
+                  style={{ margin: '0 0 30px 0', minHeight: 400, width: '100%' }}
+                >
+                  <div className="col-sm-12 col-12">
+                    <div className="row" width="100%">
+                      <div className="col-sm-12 col-12">
+                        <p className="h2 text-center">Balance mensual</p>
+                      </div>
                     </div>
-                  </div>
-                  <div className="row">
-                    <div style={{ marginLeft: '25%', width: '50%' }}>
-                      {createBalanceChart()}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div
-                id="comp-charts"
-                className="row"
-                style={{ margin: 0, minHeight: 400, width: '100%' }}
-              >
-                <div className="col-sm-12 col-12">
-                  <div className="row" width="100%">
-                    <div className="col-sm-12 col-12">
-                      <p className="h2 text-center">Desgloce por categoria</p>
-                    </div>
-                  </div>
-                  <div
-                    className="row"
-                    style={{ margin: 0, minHeight: '100%', width: '100%' }}
-                  >
-                    <div id="expenses" className="col-sm-6 col-6">
-                      {createExpensesChart()}
-                    </div>
-                    <div id="incomes" className="col-sm-6 col-6">
-                      {createIncomeChart()}
+                    <div className="row">
+                      <div style={{ marginLeft: '25%', width: '50%' }}>
+                        {createBalanceChart()}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </>
-          )}
+                <div
+                  id="comp-charts"
+                  className="row"
+                  style={{ margin: 0, minHeight: 400, width: '100%' }}
+                >
+                  <div className="col-sm-12 col-12">
+                    <div className="row" width="100%">
+                      <div className="col-sm-12 col-12">
+                        <p className="h2 text-center">Desgloce por categoria</p>
+                      </div>
+                    </div>
+                    <div
+                      className="row"
+                      style={{ margin: 0, minHeight: '100%', width: '100%' }}
+                    >
+                      <div id="expenses" className="col-sm-6 col-6">
+                        {createExpensesChart()}
+                      </div>
+                      <div id="incomes" className="col-sm-6 col-6">
+                        {createIncomeChart()}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
         </div>
       </div>
-    </React.Fragment>
+    </div>
   );
 };
 

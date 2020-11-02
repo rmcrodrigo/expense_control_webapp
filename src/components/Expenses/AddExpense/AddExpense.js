@@ -21,7 +21,7 @@ const AddExpense = ({
   resetExpenseError,
   userToken,
 }) => {
-  
+
   useEffect(() => {
     getUserCategoriesByTypeRq(1, userToken);
   }, []);
@@ -29,17 +29,21 @@ const AddExpense = ({
   if (!categories || categories.length < 1) return <NoCategoriesMsg />;
 
   return (
-    <div className="add-expense-container card">
-      <p className="card-title h2 mb-4">Agregar nuevo gasto</p>
-      <ExpenseForm
-        actionForm="add"
-        addExpenseRq={addExpenseRq}
-        categories={categories}
-        expenseErrors={expenseErrors}
-        history={history}
-        resetExpenseError={resetExpenseError}
-        userToken={userToken}
-      />
+    <div className="card card-container">
+      <div className="card-body">
+        <div style={{ borderBottom: 'solid 1px lightgray' }}>
+          <h1 className='h3 font-weight-bold text-center'>Add new expense</h1>
+        </div>
+        <ExpenseForm
+          actionForm="add"
+          addExpenseRq={addExpenseRq}
+          categories={categories}
+          expenseErrors={expenseErrors}
+          history={history}
+          resetExpenseError={resetExpenseError}
+          userToken={userToken}
+        />
+      </div>
     </div>
   );
 };

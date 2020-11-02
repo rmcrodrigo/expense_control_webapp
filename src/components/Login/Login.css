@@ -15,16 +15,18 @@
 #login-container {
   background: white;
   border-radius: 1em;
+  box-shadow: -5px 5px 15px #000;
   display: flex;
   flex-wrap: wrap;
   height: 90%; 
-  left: 15%;
+  /*left: 15%;
   padding-left: 0px;
   padding-right: 0px;
-  position: relative;
-  width: 70%;
+  position: relative;*/
+  padding: 0;
+  width: auto;
   border: 0px;
-  margin: 0px;
+  margin: 0 15% 0 15%;
   min-height: 536px;
 }
 

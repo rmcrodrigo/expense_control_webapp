@@ -170,7 +170,7 @@ const CategoryForm = ({
   };
 
   return (
-    <form autoComplete="off" onSubmit={sendAction}>
+    <form className="pt-3" autoComplete="off" onSubmit={sendAction}>
       {renderErrors()}
       <div className="form-group">
         <label>Nombre</label>

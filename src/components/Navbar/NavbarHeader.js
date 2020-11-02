@@ -1,12 +1,15 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
+import { useLocation } from 'react-router-dom';
 import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
 
 import { getUserCategoriesRq } from '../../actions/categoryActions';
 import './NavbarHeader.css';
 
 const NavbarHeader = ({ userData }) => {
+
+  const location = useLocation();
 
   const logout = (e) => {
     e.preventDefault();
@@ -21,19 +24,19 @@ const NavbarHeader = ({ userData }) => {
         expand="lg"
         fixed="top"
       >
-        <Navbar.Brand href="/">
+        <Navbar.Brand className="font-weight-bold" href="/">
           Expenses control
         </Navbar.Brand>
         <Navbar.Toggle />
         <Navbar.Collapse id="basic-navbar">
           <Nav className="mr-auto">
-            <Nav.Link href="/categories">
+            <Nav.Link className={location.pathname === "/categories" ? "active": ""} href="/categories">
               Categories
             </Nav.Link>
-            <Nav.Link href="/expenses">
+            <Nav.Link className={location.pathname === "/expenses" ? "active": ""} href="/expenses">
               Expenses
             </Nav.Link>
-            <Nav.Link href="/incomes">
+            <Nav.Link className={location.pathname === "/incomes" ? "active ": ""} href="/incomes">
               Incomes
             </Nav.Link>
           </Nav>
