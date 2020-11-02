@@ -26,7 +26,9 @@ const AddIncome = ({
   return (
     <div className="card card-container">
       <div className="card-body">
-        <p className="card-title mb-4 h2">Agregar un ingreso</p>
+        <div style={{ borderBottom: 'solid 1px lightgray' }}>
+          <h1 className="h3 font-weight-bold text-center">Add new income</h1>
+        </div>
         <IncomeForm
           actionForm="add"
           addIncomeRq={addIncomeRq}

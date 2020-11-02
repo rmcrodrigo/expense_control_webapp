@@ -37,7 +37,7 @@ const Category = ({ category, delCategoryRq, userToken }) => {
         <Link
           style={{ marginLeft: 5 }}
           to={`/categories/edit/${category.id}`}
-          className="btn btn-sm btn-dark"
+          className="btn btn-sm btn-info"
         >
           Edit
         </Link>

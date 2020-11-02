@@ -11,8 +11,8 @@ const IncomeList = ({ categores, delIncomeRq, goIncomeForm, incomes, userToken }
 
   return (
     <React.Fragment>
-      <table className="table table-bordered table-hover table-striped">
-        <thead className="thead-dark">
+      <table className="table table-sm table-bordered table-hover">
+        <thead className="thead-light">
           <tr>
             <th>Fecha</th>
             <th>Descripci&oacute;n</th>

@@ -53,7 +53,7 @@ const Income = ({
           Eliminar
         </button>
         <button
-          className="btn btn-dark btn-sm"
+          className="btn btn-info btn-sm"
           onClick={(e) => goIncomeForm(e, income.id)}
           style={{ marginLeft: 5 }}
           type="button"

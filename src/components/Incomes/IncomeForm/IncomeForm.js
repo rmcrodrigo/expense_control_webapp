@@ -187,7 +187,7 @@ const IncomeForm = ({
   };
 
   return (
-    <form autoComplete="off" onSubmit={sendAction}>
+    <form autoComplete="off" className="pt-3" onSubmit={sendAction}>
       {renderErrors()}
       {renderCategories()}
       <div className="form-gorup">

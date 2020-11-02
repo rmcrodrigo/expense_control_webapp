@@ -25,7 +25,7 @@ function LoginForm({
 
   const history = useHistory();
 
-  useEffect(function() {
+  useEffect(function () {
     setSpinnerVisibility(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -155,10 +155,17 @@ function LoginForm({
             placeholder="Password"
           />
         </div>
-
+        <div style={{ left: -12, position: "relative", top: -10 }}>
+          <Link
+            className="btn btn-link"
+            style={{ fontSize: 13}}
+            to="/reset-password">
+            Did you forget your password?
+          </Link>
+        </div>
         <div
           className="text-center"
-          style={{ marginBottom: 10, marginTop: 25 }}
+          style={{ marginBottom: 10, marginTop: 5 }}
         >
           <button className="btn btn-lg btn-success" type="submit">
             Login

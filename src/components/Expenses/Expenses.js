@@ -140,12 +140,12 @@ const Expenses = ({
   };
 
   return (
-    <div className="card card-container">
+    <div className="card card-container expenses-container">
       <div className="card-body">
-        <div style={{ borderBottom: 'solid 1px lightgray', paddingBottom: 10 }}>
-          <h1 className="h3 text-center">Expenses List</h1>
+        <div style={{ borderBottom: 'solid 1px lightgray' }}>
+          <h1 className="h3 font-weight-bold text-center">Expense List</h1>
         </div>
-        <div className="pt-2">
+        <div className="pt-3">
           {renderExpenseErrors()}
           <DatesContainer
             searchAction={searchExpenses}
@@ -156,7 +156,7 @@ const Expenses = ({
             type="button"
             id="add"
             onClick={goExpenseForm}
-            className="btn btn-primary add-button"
+            className="btn btn-success add-button"
           >
             Agregar gasto
           </button>

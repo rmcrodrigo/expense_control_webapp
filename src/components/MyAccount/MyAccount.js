@@ -31,9 +31,9 @@ function MyAccount({
   const [lastname, setLastname] = useState('');
   const [name, setName] = useState('');
 
-  const [opwd, setOpwd] = useState('');
+  // const [opwd, setOpwd] = useState('');
   const [npwd, setNpwd] = useState('');
-  const [vnpwd, setVnpwd] = useState('');
+  // const [vnpwd, setVnpwd] = useState('');
 
   const [birthdayError, setBirthdayError] = useState(false);
   const [emailError, setEmailError] = useState(false);
@@ -54,14 +54,14 @@ function MyAccount({
     npwdError: setNpwdError,
     name: setName,
     nameError: setNameError,
-    opwd: setOpwd,
-    vnpwd: setVnpwd,
+    // opwd: setOpwd,
+    // vnpwd: setVnpwd,
     vnpwdError: setVnpwdError
   };
 
   useEffect(function () {
     getProfile(token);
-  }, [token]);
+  }, [getProfile, token]);
 
   useEffect(function () {
     if (profile) {
@@ -145,13 +145,13 @@ function MyAccount({
   };
 
   return (
-    <Card className="my-account-container">
+    <Card className="card-container">
       <Card.Body>
         <form className="profile-container" onSubmit={updateProfile}>
-          <div style={{ borderBottom: 'solid 1px lightgray', paddingBottom: 10 }}>
+          <div style={{ borderBottom: 'solid 1px lightgray', paddingBottom: 5 }}>
             <span className="h3">Update profile</span>
           </div>
-          <div className="form-row" style={{ marginTop: 15 }}>
+          <div className="form-row pt-3">
             <div className="form-group col">
               <label htmlFor="name">Name</label>
               <input
@@ -242,11 +242,11 @@ function MyAccount({
           </div>
         </form>
         <form className="password-container" onSubmit={updatePassword}>
-          <div style={{ borderBottom: 'solid 1px lightgray', paddingBottom: 10 }}>
+          <div style={{ borderBottom: 'solid 1px lightgray', paddingBottom: 5 }}>
             <span className="h3">Change password</span>
           </div>
-          <div className="form-row">
-            <div className="form-group col-6" style={{ marginTop: 15 }}>
+          <div className="form-row pt-3">
+            <div className="form-group col-6">
               <label htmlFor="old-password">Old password</label>
               <input
                 className="form-control form-control-sm"

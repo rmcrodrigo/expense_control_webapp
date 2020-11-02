@@ -53,7 +53,7 @@ const Expense = ({
           Delete
         </button>
         <button
-          className="btn btn-sm btn-dark"
+          className="btn btn-sm btn-info"
           onClick={(e) => goExpenseForm(e, expense.id)}
           style={{ marginLeft: 5 }}
           type="button"
