@@ -11,6 +11,8 @@ import NoCategoriesMsg from '../Categories/NoCategoriesMsg/NoCategoriesMsg';
 import CreateChart from '../Util/Chart';
 import DatesContainer from '../Util/DatesContainer/DatesContainer';
 
+import './Dashboard.css'
+
 const Dashboard = ({
   categories,
   categoryErrors,
@@ -220,8 +222,7 @@ const Dashboard = ({
               <>
                 <div
                   id="balance-chart"
-                  className="row mb-5"
-                  style={{ margin: '0 0 30px 0', minHeight: 400, width: '100%' }}
+                  className="row"
                 >
                   <div className="col-sm-12 col-12">
                     <div className="row" width="100%">
@@ -239,11 +240,10 @@ const Dashboard = ({
                 <div
                   id="comp-charts"
                   className="row"
-                  style={{ margin: 0, minHeight: 400, width: '100%' }}
                 >
                   <div className="col-sm-12 col-12">
                     <div className="row" width="100%">
-                      <div className="col-sm-12 col-12">
+                      <div className="col-sm-12 col-12 comp-charts-title">
                         <p className="h2 text-center">Desgloce por categoria</p>
                       </div>
                     </div>

@@ -31,9 +31,9 @@ function MyAccount({
   const [lastname, setLastname] = useState('');
   const [name, setName] = useState('');
 
-  const [opwd, setOpwd] = useState('');
+  // const [opwd, setOpwd] = useState('');
   const [npwd, setNpwd] = useState('');
-  const [vnpwd, setVnpwd] = useState('');
+  // const [vnpwd, setVnpwd] = useState('');
 
   const [birthdayError, setBirthdayError] = useState(false);
   const [emailError, setEmailError] = useState(false);
@@ -54,14 +54,14 @@ function MyAccount({
     npwdError: setNpwdError,
     name: setName,
     nameError: setNameError,
-    opwd: setOpwd,
-    vnpwd: setVnpwd,
+    // opwd: setOpwd,
+    // vnpwd: setVnpwd,
     vnpwdError: setVnpwdError
   };
 
   useEffect(function () {
     getProfile(token);
-  }, [token]);
+  }, [getProfile, token]);
 
   useEffect(function () {
     if (profile) {
