@@ -1,18 +1,27 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
-import { Button, Card } from 'react-bootstrap';
+import { Alert, Button, Card } from 'react-bootstrap';
 
-import { getProfile } from '../../actions/userActions';
+import { SimpleClosableError } from '../Errors';
+
+import { getProfileRq, resetUserError, updatePasswordRq, updateProfileRq } from '../../actions/userActions';
 
 import DatePicker from 'react-datepicker';
 
 import './my-account.css';
 
 function MyAccount({
-  getProfile,
+  getProfileRq,
   profile,
-  token
+  resetUserError,
+  successRq,
+  token,
+  updatePasswordRq,
+  updatePasswordRqFlag,
+  updateProfileRq,
+  updateProfileRqFlag,
+  userErrors
 }) {
 
   const today = new Date();
@@ -22,31 +31,31 @@ function MyAccount({
   const maxDate = new Date(year - 18, month, day);
   const minDate = new Date(year - 150, month, day);
   const strongRegex = new RegExp(
-    '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})'
+    '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#_$%^&*])(?=.{8,})'
   );
 
   const [birthday, setBirthday] = useState(maxDate);
-  const [email, setEmail] = useState('');
   const [genre, setGenre] = useState('M');
   const [lastname, setLastname] = useState('');
   const [name, setName] = useState('');
 
-  // const [opwd, setOpwd] = useState('');
+  const [opwd, setOpwd] = useState('');
   const [npwd, setNpwd] = useState('');
-  // const [vnpwd, setVnpwd] = useState('');
+  const [vnpwd, setVnpwd] = useState('');
 
   const [birthdayError, setBirthdayError] = useState(false);
-  const [emailError, setEmailError] = useState(false);
   const [lastnameError, setLastnameError] = useState(false);
   const [nameError, setNameError] = useState(false);
   const [npwdError, setNpwdError] = useState(false);
   const [vnpwdError, setVnpwdError] = useState(false);
 
+  const [genericPrErrors, setGenericPrErrors] = useState(null);
+  const [genericPaErrors, setGenericPaErrors] = useState(null);
+  const [showSuccessMsg, setShowSuccessMsg] = useState(successRq);
+
   const stateSetters = {
     birthday: setBirthday,
     birthdayError: setBirthdayError,
-    email: setEmail,
-    emailError: setEmailError,
     genre: setGenre,
     lastname: setLastname,
     lastnameError: setLastnameError,
@@ -54,39 +63,35 @@ function MyAccount({
     npwdError: setNpwdError,
     name: setName,
     nameError: setNameError,
-    // opwd: setOpwd,
-    // vnpwd: setVnpwd,
+    opwd: setOpwd,
+    vnpwd: setVnpwd,
     vnpwdError: setVnpwdError
   };
 
   useEffect(function () {
-    getProfile(token);
-  }, [getProfile, token]);
+    getProfileRq(token);
+  }, [getProfileRq, token]);
 
   useEffect(function () {
     if (profile) {
       setBirthday(new Date(profile.birthday));
-      setEmail(profile.email);
       setGenre(profile.genre);
       setLastname(profile.lastname);
       setName(profile.name);
     }
   }, [profile]);
 
+  useEffect(function () {
+    setShowSuccessMsg(updatePasswordRqFlag || updateProfileRqFlag);
+    setNpwd('');
+    setOpwd('');
+    setVnpwd('');
+  }, [setShowSuccessMsg, updatePasswordRqFlag, updateProfileRqFlag]);
+
   const handleChangeInput = (e) => {
 
     if (e.target.type !== 'radio') e.preventDefault();
     const { name, value } = e.target;
-
-    if (name === 'email') {
-      setEmail(value);
-      if (!validateEmail(e.target)) {
-        setEmailError(true);
-      } else {
-        setEmailError(false);
-      }
-      return;
-    }
 
     if (name === 'npwd') {
       handleChangePwd(e);
@@ -127,22 +132,84 @@ function MyAccount({
     }
   };
 
-  const updateProfile = () => {
+  const updateProfile = (e) => {
+    e.preventDefault();
+
+    if (!lastname && !name) {
+      setGenericPrErrors(["All fields are required"]);
+      return false;
+    }
+
+    if (!birthday || !genre || !lastname || !name)
+      return false;
+
+    if (birthdayError || lastnameError || nameError)
+      return false;
+
+    updateProfileRq({
+      birthday,
+      genre,
+      lastname,
+      name
+    }, token);
 
   }
 
-  const updatePassword = () => {
-  }
+  const updatePassword = (e) => {
 
-  const validateEmail = (input) => {
-    if (!input.value || !input.validity.valid) return false;
-    return true;
-  };
+    e.preventDefault();
+
+    if (!opwd && !npwd && !vnpwd) {
+      setGenericPaErrors(["All fields are required"])
+      return false;
+    }
+
+    if (!opwd || !npwd || !vnpwd)
+      return false;
+
+    if (npwdError || vnpwdError)
+      return false;
+
+    if(npwd !== vnpwd) {
+      setGenericPaErrors(["New passwords needs to be equals"]);
+      return false;
+    }
+
+    if (opwd === npwd) {
+      setGenericPaErrors(["New password needs to be different than the old one"]);
+      return false;
+    }
+
+    updatePasswordRq({
+      oldPassword: opwd,
+      newPassword: npwd,
+    }, token);
+
+  }
 
   const validatePassword = (pwd) => {
     if (!pwd || !strongRegex.test(pwd)) return false;
     return true;
   };
+
+  const renderFormErrors = (errors, onCloseFn) => {
+    const closeFn = () => {
+      onCloseFn(null);
+    }
+    return <SimpleClosableError errors={errors} onCloseFn={closeFn} visible={true} />;
+  }
+
+  const renderSuccessMsg = function (msg) {
+    return (
+      <Alert dismissible onClose={() => setShowSuccessMsg(false)} variant="success">
+        {msg}
+      </Alert>
+    )
+  }
+
+  const renderResponseErrors = function () {
+    return <SimpleClosableError errors={userErrors} onCloseFn={resetUserError} />;
+  }
 
   return (
     <Card className="card-container">
@@ -151,6 +218,9 @@ function MyAccount({
           <div style={{ borderBottom: 'solid 1px lightgray', paddingBottom: 5 }}>
             <span className="h3">Update profile</span>
           </div>
+          { userErrors ? renderResponseErrors() : null}
+          {genericPrErrors ? renderFormErrors(genericPrErrors, setGenericPrErrors) : null}
+          {showSuccessMsg ? renderSuccessMsg(updateProfileRqFlag ? "Profile updated successfully" : "Password updated successfully") : null}
           <div className="form-row pt-3">
             <div className="form-group col">
               <label htmlFor="name">Name</label>
@@ -176,16 +246,6 @@ function MyAccount({
           </div>
           <div className="form-row">
             <div className="col form-group">
-              <label htmlFor="email">Email</label>
-              <input
-                className={'form-control form-control-sm' + (emailError ? ' input-error' : '')}
-                id="email"
-                name="email"
-                onChange={handleChangeInput}
-                type="text"
-                value={email} />
-            </div>
-            <div className="col form-group">
               <label htmlFor="birthday">Birthday</label>
               <DatePicker
                 className={'form-control form-control-sm' + (birthdayError ? ' input-error' : '')}
@@ -199,8 +259,6 @@ function MyAccount({
                 showYearDropdown
               />
             </div>
-          </div>
-          <div className="form-row">
             <div className="col form-group">
               <label htmlFor="genre">Genre</label>
               <div>
@@ -245,35 +303,41 @@ function MyAccount({
           <div style={{ borderBottom: 'solid 1px lightgray', paddingBottom: 5 }}>
             <span className="h3">Change password</span>
           </div>
+          {genericPaErrors ? renderFormErrors(genericPaErrors, setGenericPaErrors) : null}
           <div className="form-row pt-3">
             <div className="form-group col-6">
               <label htmlFor="old-password">Old password</label>
               <input
                 className="form-control form-control-sm"
                 onChange={handleChangeInput}
-                type="text"
+                type="password"
                 name="opwd"
-                id="old-password" />
+                id="old-password"
+                value={opwd} />
             </div>
           </div>
           <div className="form-row">
             <div className="col form-group">
               <label htmlFor="new-pwd">New password</label>
               <input
-                type="text"
+                type="password"
                 name="npwd"
                 id="new-pwd"
                 className={'form-control form-control-sm' + (npwdError ? ' input-error' : '')}
-                onChange={handleChangeInput} />
+                onChange={handleChangeInput}
+                value={npwd} />
+              {npwdError ? <span className="error-msg">Insecure password</span> : null}
             </div>
             <div className="col form-group">
               <label htmlFor="vnew-pwd">Confirm new password</label>
               <input
-                type="text"
+                type="password"
                 name="vnpwd"
                 id="vn-pwd"
                 className={'form-control form-control-sm' + (vnpwdError ? ' input-error' : '')}
-                onChange={handleChangeInput} />
+                onChange={handleChangeInput}
+                value={vnpwd} />
+              {vnpwdError ? <span className="error-msg">Passwords don't match</span> : null}
             </div>
           </div>
           <div style={{ marginTop: 10 }}>
@@ -286,14 +350,25 @@ function MyAccount({
 }
 
 MyAccount.propTypes = {
-  getProfile: PropTypes.func.isRequired,
+  getProfileRq: PropTypes.func.isRequired,
   profile: PropTypes.object,
-  token: PropTypes.string.isRequired
+  resetUserError: PropTypes.func.isRequired,
+  successRq: PropTypes.bool.isRequired,
+  token: PropTypes.string.isRequired,
+  updatePasswordRq: PropTypes.func.isRequired,
+  updatePasswordRqFlag: PropTypes.bool.isRequired,
+  updateProfileRq: PropTypes.func.isRequired,
+  updateProfileRqFlag: PropTypes.bool.isRequired,
+  userErrors: PropTypes.array
 };
 
 const mapStateToProps = state => ({
   profile: state.user.profile,
-  token: state.sign.userData.token
+  successRq: state.user.successRq,
+  token: state.sign.userData.token,
+  updatePasswordRqFlag: state.user.updatePasswordRqFlag,
+  updateProfileRqFlag: state.user.updateProfileRqFlag,
+  userErrors: state.user.userErrors
 });
 
-export default connect(mapStateToProps, { getProfile })(MyAccount);
+export default connect(mapStateToProps, { getProfileRq, resetUserError, updatePasswordRq, updateProfileRq })(MyAccount);

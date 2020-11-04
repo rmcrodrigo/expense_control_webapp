@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Link, useHistory } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import PropTypes from 'prop-types';
 
 import SuccessMsg from '../../Util/SuccessMsg';
@@ -32,9 +33,10 @@ function LoginForm({
 
   useEffect(() => {
     if (userData && userData.token) {
-      const myDate = new Date();
-      myDate.setTime(myDate.getTime() + 2 * 60 * 60 * 1000);
-      localStorage.setItem('userData', JSON.stringify(userData));
+      // const expiration = new Date(new Date().getTime() + 6 * 60 * 60 * 1000);
+      console.log(new Date());
+      const expiration = new Date(new Date().getTime() + 15 * 60 * 1000);
+      Cookies.set("userData", JSON.stringify(userData), {expires: expiration, path: ''});
       history.push('/');
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -113,7 +115,7 @@ function LoginForm({
         className='login100-form validate-form'
         onSubmit={login}
       >
-        <p className="h2 text-center" style={{ marginBottom: 30 }}>
+        <p className="h2 font-weight-bold text-center" style={{ marginBottom: 30 }}>
           Member Login
         </p>
 

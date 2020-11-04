@@ -16,6 +16,8 @@ import Login from '../components/Login/Login';
 import LoginForm from '../components/Login/LoginForm/LoginForm';
 import MyAccount from '../components/MyAccount/MyAccount';
 import NotFound from '../components/NotFound';
+import ResetPassword from '../components/Login/ResetPassword/ResetPassword';
+import ResetPasswordForm from '../components/Login/ResetPassword/ResetPasswordForm';
 import SignUpForm from '../components/Login/NewUserForm/NewUserForm';
 import SuccessSignup from '../components/Login/SuccessSignin/SuccessSignin';
 
@@ -41,6 +43,16 @@ const Routes = () => (
     <Route exact path="/signup">
       <Login>
         <SignUpForm />
+      </Login>
+    </Route>
+    <Route exact path="/reset-password">
+      <Login>
+        <ResetPassword />
+      </Login>
+    </Route>
+    <Route exact path="/reset-password-form">
+      <Login>
+        <ResetPasswordForm />
       </Login>
     </Route>
     <Route exact path="/success-signin" component={SuccessSignup} />

@@ -2,6 +2,7 @@ import { applyMiddleware, compose, createStore } from 'redux';
 import thunk from 'redux-thunk';
 import { createBrowserHistory } from 'history';
 import { routerMiddleware } from 'connected-react-router';
+import Cookies from 'js-cookie';
 import rootReducer from './reducers';
 import { setUserDataFromStorage } from './actions/signActions';
 
@@ -9,7 +10,7 @@ export const history = createBrowserHistory();
 
 const checkLogin = store => next => action => {
 
-    const storedStrUserData = localStorage.getItem("userData");
+    const storedStrUserData = Cookies.get("userData");
     const storedUserData = storedStrUserData ? JSON.parse(storedStrUserData) : null;
     let flag = false;
 
@@ -35,7 +36,9 @@ const checkLogin = store => next => action => {
             "/signin",
             "/signup",
             "/success-signin",
-            "/confirm-account"
+            "/confirm-account",
+            "/reset-password",
+            "/reset-password-form"
         ].indexOf(location.pathname) < 0)
             history.push("/signin");
     }

@@ -12,8 +12,12 @@
   padding-top: 20px;
 }
 
-.my-account-container .react-datepicker-wrapper {
+.profile-container .react-datepicker-wrapper {
   display: block;
   flex: none;
   width: auto;
+}
+
+span.error-msg {
+  color: red;
 }

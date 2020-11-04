@@ -67,7 +67,7 @@ const NewUserForm = ({
   };
 
   const strongRegex = new RegExp(
-    '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#$%^&*])(?=.{8,})'
+    '^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[!@#_$%^&*])(?=.{8,})'
   );
 
   const queryFinder = useQuery();
@@ -233,7 +233,7 @@ const NewUserForm = ({
         className='login100-form validate-form'
         onSubmit={createUser}
       >
-        <p className="h2 text-center" style={{ paddingBottom: 20 }}>
+        <p className="h2 font-weight-bold text-center" style={{ paddingBottom: 20 }}>
           Sign up
         </p>
         {renderErrors()}
@@ -398,7 +398,7 @@ const NewUserForm = ({
           </Link>
           </div>
           <div className="col-6 col-sm-6 col-md-6 col-lg-6">
-            <button className=" btn btn-md btn-primary" type="submit">
+            <button className=" btn btn-md btn-success" type="submit">
               Sign up
           </button>
           </div>

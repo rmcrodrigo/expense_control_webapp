@@ -2,6 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import { connect } from 'react-redux';
 import { useLocation } from 'react-router-dom';
+import Cookies from 'js-cookie';
 import { Nav, Navbar, NavDropdown } from 'react-bootstrap';
 
 import { getUserCategoriesRq } from '../../actions/categoryActions';
@@ -13,7 +14,7 @@ const NavbarHeader = ({ userData }) => {
 
   const logout = (e) => {
     e.preventDefault();
-    localStorage.removeItem('userData');
+    Cookies.remove('userData', { path: ''});
     window.location.reload();
   };
 
