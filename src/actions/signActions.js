@@ -46,7 +46,7 @@ export const githubSign = (code, history) => {
     axios.get("/signin/oauth/github/" + code)
       .then(function (response) {
         if (handleRequestError(response, dispatch, signError)) {
-          if (response.data.code === 211) {
+          if (response.data.code === 119) {
             dispatch(setUserDataFromOAuth({
               code: response.data.code,
               birthday: response.data.birthday,
